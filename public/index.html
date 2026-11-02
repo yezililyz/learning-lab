@@ -1,0 +1,1586 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Learning Lab — workbook portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@500;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#2B1A1F;--ink2:#6E5A55;--paper:#FFFDFA;--wash:#FCF4EA;--lav:#F8E6D2;--line:#EED9C3;--violet:#B4520A;--violet-ink:#FFFFFF;--ok:#2E7D4F;--danger:#B42318;--brand2:#5B2333;--glyph:#F6B04B;
+--serif:"Bitter",Georgia,"Times New Roman",serif;--sans:"Source Sans 3","Segoe UI",system-ui,sans-serif;color-scheme:light;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#F7ECE3;--ink2:#C7B2A6;--paper:#1C1416;--wash:#271C1D;--lav:#3A2824;--line:#4B3630;--violet:#F2A04E;--violet-ink:#1C1416;--ok:#7FCF9C;--danger:#FF8A80;--brand2:#F2A04E;--glyph:#1C1416;color-scheme:dark}}
+:root[data-theme="dark"]{--ink:#F7ECE3;--ink2:#C7B2A6;--paper:#1C1416;--wash:#271C1D;--lav:#3A2824;--line:#4B3630;--violet:#F2A04E;--violet-ink:#1C1416;--ok:#7FCF9C;--danger:#FF8A80;--brand2:#F2A04E;--glyph:#1C1416;color-scheme:dark}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 80px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.55 var(--sans)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+a{color:var(--violet)}
+h1,h2,h3,h4{font-family:var(--serif);line-height:1.2;margin:0 0 .4em;font-weight:600}
+h1{font-size:clamp(28px,4vw,40px);font-weight:700;letter-spacing:-.01em}
+h2{font-size:22px}.h2{margin:36px 0 14px}
+:focus-visible{outline:3px solid var(--violet);outline-offset:2px;border-radius:6px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.eyebrow{font-weight:600;color:var(--violet);margin:0 0 6px;font-size:15px}
+.lead{font-size:19px;color:var(--ink2);max-width:62ch;margin:0 0 24px}
+.hint{color:var(--ink2);font-size:14px;font-weight:400}
+.meta-line{color:var(--ink2);font-size:14px;margin:6px 0}
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--paper);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:14px;height:72px}
+.logo{font-family:var(--serif);font-weight:700;font-size:22px;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:8px;margin-right:auto}
+.logo i{width:32px;height:32px;border-radius:50% 50% 50% 12px;background:var(--brand2);display:grid;place-items:center;color:var(--glyph);font-style:normal;font-size:16px}
+.nav{display:flex;gap:6px}
+.nav a{padding:9px 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--wash);color:var(--violet);text-decoration:none;font-weight:600;font-size:15px}
+.nav a[aria-current="page"]{background:var(--violet);color:var(--violet-ink);border-color:var(--violet)}
+#avatarBtn{width:42px;height:42px;border-radius:50%;border:none;background:var(--lav);color:var(--violet);font:700 18px var(--serif);cursor:pointer}
+#syncStatus{font-size:13px;color:var(--ink2);white-space:nowrap}
+#syncStatus[data-state="synced"]::before{content:"● ";color:var(--ok)}
+#syncStatus[data-state="error"]::before{content:"● ";color:var(--danger)}
+main{padding:36px 0 80px}
+/* cards & buttons */
+.card{background:var(--paper);border:1.5px solid var(--line);border-radius:20px;padding:24px;margin-bottom:18px}
+.btn{text-decoration:none;display:inline-block;font:600 15px var(--sans);border-radius:999px;padding:11px 20px;cursor:pointer;border:1.5px solid var(--violet);background:transparent;color:var(--violet)}
+.btn.primary{background:var(--violet);color:var(--violet-ink)}
+.btn.ghost{border-color:var(--line);background:var(--wash)}
+.btn.danger{color:var(--danger)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.saved{color:var(--ok);font-size:13px}
+.bar{height:10px;background:var(--lav);border-radius:999px;overflow:hidden;margin-top:14px}
+.bar.sm{height:7px}
+.bar span{display:block;height:100%;background:var(--mc,var(--violet));border-radius:inherit;transition:width .3s}
+/* profile */
+.profile-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:28px;align-items:start}
+.welcome{margin-bottom:20px}
+.avatar-row{display:flex;align-items:center;gap:16px;margin-bottom:12px}
+.avatar-lg{width:92px;height:92px;border-radius:50%;background:var(--lav);color:var(--violet);display:grid;place-items:center;font:700 44px var(--serif);border:3px solid var(--line);flex:none}
+.preview-card{background:var(--lav);border-color:transparent;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
+.preview-card .avatar-lg{background:var(--paper)}
+.preview-card .stat{color:var(--violet);font-weight:700}
+.pill{display:inline-block;background:var(--paper);color:var(--violet);border-radius:999px;padding:3px 12px;font-weight:600;font-size:14px}
+.counter{display:block;text-align:right;font-size:13px;color:var(--ink2)}
+.field{margin:0 0 20px}
+.field.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+label,.lbl{display:block;font-weight:700;margin-bottom:6px}
+label .hint,.lbl .hint{display:block;font-weight:400;margin-top:1px}
+input[type=text],textarea,select{width:100%;font:inherit;color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:12px;padding:10px 12px}
+input[type=text]:focus,textarea:focus,select:focus{border-color:var(--violet);outline:none;box-shadow:0 0 0 3px var(--lav)}
+textarea{resize:vertical;min-height:84px}
+.locked{opacity:.7}
+/* catalog */
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
+.mod-card{border-left:10px solid var(--mc);display:flex;flex-direction:column;margin:0}
+.mod-card h2{font-size:21px;margin-top:10px}
+.mod-card p{margin:0 0 6px}
+.mod-card .actions{margin-top:auto;padding-top:14px}
+.mod-top{display:flex;align-items:center;gap:10px}
+.mod-icon{width:42px;height:42px;border-radius:12px;background:var(--wash);display:grid;place-items:center;font-size:22px;flex:none}
+.mod-icon.xl{width:64px;height:64px;font-size:32px;border-radius:16px;background:var(--paper)}
+.provider{font-size:14px;font-weight:600;color:var(--mc,var(--ink2));margin:0}
+/* dashboard */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:8px 0 18px}
+.stat-card{margin:0;background:var(--wash);border-color:transparent}
+.stat-card b{display:block;font:700 34px var(--serif);color:var(--violet)}
+.stat-card small{font-size:18px;color:var(--ink2)}
+.continue{display:flex;justify-content:space-between;align-items:center;gap:16px;border:2px solid var(--violet);background:var(--wash)}
+.empty-card{text-align:center;padding:40px}
+.activity{list-style:none;padding:0;margin:0;border:1.5px solid var(--line);border-radius:16px;overflow:hidden}
+.activity li{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.activity li:last-child{border-bottom:none}
+.activity time{margin-left:auto;font-size:13px;color:var(--ink2);white-space:nowrap}
+.dot-c{width:10px;height:10px;border-radius:50%;flex:none}
+/* journey */
+.journey-row{border-left:10px solid var(--mc)}
+.jr-head{display:flex;align-items:center;gap:14px}
+.jr-head b{margin-left:auto;font:700 26px var(--serif);color:var(--mc)}
+.jr-head h2{margin:0}
+.tool-dots{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0 4px}
+.tdot{width:22px;height:22px;border-radius:6px;border:2px solid var(--line);background:var(--paper)}
+.tdot.part{background:linear-gradient(90deg,var(--mc) 50%,var(--paper) 50%);border-color:var(--mc)}
+.tdot.done{background:var(--mc);border-color:var(--mc)}
+/* module */
+.mod-banner{background:color-mix(in srgb,var(--mc) 12%,var(--paper));padding:24px 0 26px;margin:-36px 0 28px;border-bottom:1px solid var(--line)}
+.crumb{font-weight:600;text-decoration:none;display:inline-block;margin-bottom:14px}
+.mb-row{display:flex;gap:16px;align-items:center}
+.mb-row h1{margin:0}
+.mod-banner .bar span{background:var(--mc)}
+.notice{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:16px 0 0;padding:14px 18px}
+.mod-layout{display:grid;grid-template-columns:270px minmax(0,1fr);gap:28px;align-items:start}
+.mod-nav{position:sticky;top:calc(env(safe-area-inset-top,0px) + 90px);max-height:calc(100vh - 110px);overflow:auto;padding-right:6px}
+.mn-group{font-weight:700;font-size:14px;color:var(--ink2);margin:16px 0 4px}
+.mn-link{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:10px;text-decoration:none;color:var(--ink);font-size:15px}
+.mn-link:hover{background:var(--wash)}
+.mn-link.on{background:var(--lav);color:var(--violet);font-weight:600}
+.mn-link.brief{margin-top:14px;border:1.5px dashed var(--line)}
+.dot{width:12px;height:12px;border-radius:50%;border:2px solid var(--line);flex:none}
+.dot.part{border-color:var(--violet);background:linear-gradient(90deg,var(--violet) 50%,transparent 50%)}
+.dot.done{background:var(--ok);border-color:var(--ok)}
+.steps{counter-reset:s;list-style:none;padding:0;margin:0 0 18px}
+.steps li{counter-increment:s;display:grid;grid-template-columns:40px 1fr;gap:2px 12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.steps li::before{content:counter(s);grid-row:span 2;width:32px;height:32px;border-radius:50%;background:var(--violet);color:var(--violet-ink);display:grid;place-items:center;font:700 15px var(--serif)}
+.steps span{color:var(--ink2)}
+.howto{background:var(--wash);border-radius:14px;padding:14px 18px;margin-bottom:18px}
+.howto p{margin:6px 0}
+.glossary summary{cursor:pointer;font:600 19px var(--serif)}
+.glossary dl{margin:14px 0 0;columns:2 320px;column-gap:28px}
+.glossary dt{font-weight:700;color:var(--violet);break-after:avoid}
+.glossary dd{margin:2px 0 14px;color:var(--ink2);break-inside:avoid}
+.sheet .meta{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:14px;color:var(--ink2);margin-bottom:10px}
+.ref{background:var(--wash);border-radius:999px;padding:2px 10px}
+.tool-title{font-size:28px}
+.intro{color:var(--ink2);font-size:18px;margin:0 0 18px}
+.tip{border-left:4px solid var(--violet);background:var(--wash);border-radius:0 14px 14px 0;padding:12px 16px;margin:0 0 22px}
+.tip p{margin:4px 0 0}
+.checks{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px}
+.chk{display:flex;gap:10px;align-items:flex-start;font-weight:400;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;margin:0;cursor:pointer}
+.chk:has(input:checked){border-color:var(--violet);background:var(--wash)}
+.chk input{margin-top:4px;accent-color:var(--violet)}
+.customs{display:grid;gap:8px;margin-top:8px}
+.listin{margin-bottom:8px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg label{font-weight:600;margin:0;border:1.5px solid var(--line);border-radius:999px;padding:6px 14px;cursor:pointer;font-size:15px}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--violet);border-color:var(--violet);color:var(--violet-ink)}
+.seg label:has(input:focus-visible){outline:3px solid var(--violet);outline-offset:2px}
+.rate-row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid var(--line)}
+.rate-row>span{flex:1}
+.sec{font-size:17px;margin:18px 0 4px;color:var(--violet)}
+.score{display:flex;gap:16px;align-items:center;background:var(--lav);border-radius:14px;padding:14px 18px;margin-top:16px}
+.score>b{font:700 30px var(--serif);color:var(--violet);white-space:nowrap}
+.ab{display:grid;grid-template-columns:32px 1fr 1fr;gap:8px;margin-bottom:8px;align-items:stretch}
+.ab .n{font:700 16px var(--serif);color:var(--ink2);padding-top:12px}
+.ab label{font-weight:400;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;margin:0;cursor:pointer;display:flex;gap:8px}
+.ab label:has(input:checked){border-color:var(--violet);background:var(--wash);font-weight:600}
+.ab input{accent-color:var(--violet);margin-top:5px}
+.range-row{display:grid;grid-template-columns:1fr 200px 32px;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.range-row input{accent-color:var(--violet)}
+output{font-weight:700;color:var(--violet);text-align:right}
+.tbl-wrap{overflow-x:auto;border:1.5px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%}
+.grid th{text-align:left;font-size:13px;color:var(--ink2);padding:8px;background:var(--wash);white-space:nowrap}
+.grid td{padding:4px;border-top:1px solid var(--line);min-width:110px}
+.grid td input,.grid td select{border-radius:8px;padding:7px 8px}
+.grid .rowlab{font-weight:600;font-size:14px;padding:8px;min-width:120px}
+.grid .comp{font-weight:700;color:var(--violet);padding:8px;white-space:nowrap}
+.numin{max-width:90px}
+.foot{font-weight:600;color:var(--violet);margin:8px 0 0}
+.statement{font-family:var(--serif);font-size:19px;line-height:1.6;background:var(--wash);border-radius:14px;padding:16px 18px;margin:4px 0 16px}
+.pager{display:flex;justify-content:space-between;gap:10px;margin-top:24px;flex-wrap:wrap}
+.brief .q{font-weight:700;margin:14px 0 2px}
+.brief .a{margin:0 0 8px;white-space:pre-wrap}
+.brief h3.bsec{margin-top:30px;padding-top:14px;border-top:2px solid var(--line);color:var(--violet)}
+.brief h4{font-size:18px;margin:18px 0 4px}
+.btable th,.btable td{text-align:left;padding:7px 10px;border-top:1px solid var(--line);font-size:15px;vertical-align:top}
+.btable th{background:var(--wash);font-size:13px}
+.bar-row{display:grid;grid-template-columns:1fr 160px 28px;gap:10px;align-items:center;margin:4px 0}
+.bar-row i{height:8px;background:var(--lav);border-radius:999px;overflow:hidden}
+.bar-row i span{display:block;height:100%;background:var(--violet)}
+#toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 24px);transform:translate(-50%,20px);background:var(--ink);color:var(--paper);padding:10px 18px;border-radius:999px;opacity:0;transition:.25s;pointer-events:none;z-index:30;font-weight:600}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+body.auth .nav,body.auth #avatarBtn,body.auth #syncStatus{display:none}
+.auth-wrap{display:grid;place-items:center;min-height:72vh}
+.auth-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,460px);gap:48px;align-items:center;width:100%}
+.auth-brand h1{font-size:clamp(30px,4vw,44px);max-width:14ch}
+.auth-points{padding:0;margin:20px 0;list-style:none}.auth-points li{padding:8px 0 8px 30px;position:relative}
+.auth-points li::before{content:"";position:absolute;left:0;top:14px;width:14px;height:14px;border-radius:50% 50% 50% 4px;background:var(--violet)}
+.auth-card{width:100%;padding:32px}
+.role-seg{margin-bottom:18px}.role-seg label{flex:1;text-align:center}
+.or{display:flex;align-items:center;gap:12px;color:var(--ink2);margin:20px 0;font-size:14px}.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+.acct-wrap{position:relative}
+.acct-menu{position:absolute;right:0;top:50px;background:var(--paper);border:1.5px solid var(--line);border-radius:14px;padding:12px;min-width:230px;box-shadow:0 8px 24px color-mix(in srgb,var(--ink) 12%,transparent);z-index:40}
+.acct-menu p{margin:0 0 8px;font-size:14px;word-break:break-all}
+.acct-menu a,.acct-menu button{display:block;width:100%;text-align:left;padding:8px 10px;border-radius:8px;font:600 15px var(--sans);color:var(--ink);text-decoration:none;background:none;border:none;cursor:pointer}
+.acct-menu a:hover,.acct-menu button:hover{background:var(--wash)}
+@media (max-width:900px){.auth-split{grid-template-columns:1fr;gap:20px}.auth-points,.auth-brand .hint{display:none}}
+.logo.big{margin-bottom:22px}
+.btn.wide{width:100%}
+.err{color:var(--danger);font-weight:600;min-height:1em;margin:0 0 10px}
+.proto{background:var(--lav);border-left:4px solid var(--brand2);border-radius:12px;padding:10px 14px;font-size:14px;margin:14px 0}
+.mail-mock{border:1.5px solid var(--line);border-radius:14px;padding:18px;background:var(--wash);margin:18px 0}
+.mm-head{font-size:14px;color:var(--ink2);border-bottom:1px solid var(--line);padding-bottom:10px}
+.account{margin-top:16px}.chk.demo{margin-top:12px;font-size:14px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:18px 0 22px;border-bottom:1.5px solid var(--line)}
+.tabs a{padding:10px 16px;text-decoration:none;font-weight:600;color:var(--ink2);border-bottom:3px solid transparent;margin-bottom:-1.5px}
+.tabs a[aria-current="page"]{color:var(--violet);border-color:var(--violet)}
+.row-between{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.admin-table td{vertical-align:middle}.acts{display:flex;flex-wrap:wrap;gap:6px}
+.btn.sm{padding:6px 12px;font-size:14px}
+.mod-icon.sm{display:inline-grid;width:28px;height:28px;font-size:15px;border-radius:8px;vertical-align:middle}
+.status{border-radius:999px;padding:2px 10px;font-size:13px;font-weight:700;background:var(--wash)}
+.status.published{color:var(--ok)}.status.draft{color:#9A6700}.status.hidden{color:var(--ink2)}
+.up-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:20px;align-items:start}
+.drop{display:flex;flex-direction:column;align-items:center;gap:4px;border:2px dashed var(--line);border-radius:16px;padding:28px;margin:16px 0;cursor:pointer;text-align:center}
+.drop.over{border-color:var(--violet);background:var(--wash)}.drop input{position:absolute;opacity:0;width:1px}
+.code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
+.ref-card dl{margin:0}.ref-card dt{margin-top:10px}.ref-card dd{margin:2px 0 0;color:var(--ink2);font-size:14px}.ref-card h3{font-size:16px;margin:18px 0 4px}
+code{background:var(--wash);border-radius:6px;padding:1px 5px;font-size:13px}
+.val{border-radius:14px;padding:14px 18px;margin-top:16px}.val.bad{background:color-mix(in srgb,var(--danger) 10%,var(--paper))}.val.good{background:color-mix(in srgb,var(--ok) 10%,var(--paper))}
+.val ul{margin:8px 0 0;padding-left:20px}.warn{color:#9A6700}
+.linkcell code{word-break:break-all}
+.pct{display:inline-block;width:60px;height:6px;background:var(--lav);border-radius:999px;overflow:hidden;vertical-align:middle}.pct i{display:block;height:100%}
+@media (max-width:900px){.up-grid{grid-template-columns:1fr}}
+@media (max-width:900px){.mod-layout,.profile-grid{grid-template-columns:1fr}.mod-nav{position:static;max-height:none;border:1.5px solid var(--line);border-radius:16px;padding:10px}.stats{grid-template-columns:1fr}}
+@media (max-width:700px){.top .wrap{flex-wrap:wrap;height:auto;padding-top:10px;padding-bottom:10px}.nav{order:3;width:100%;overflow-x:auto}#syncStatus{display:none}.field.two{grid-template-columns:1fr}.ab{grid-template-columns:24px 1fr}.ab label:last-child{grid-column:2}.range-row{grid-template-columns:1fr 32px}.range-row input{grid-column:1/-1;grid-row:2}.rate-row{flex-direction:column;align-items:flex-start}.continue{flex-direction:column;align-items:flex-start}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media print{.top,.mod-nav,.mod-banner,.noprint,.glossary,#toast{display:none!important}.mod-layout{display:block}.card{border:none;padding:0}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="#dashboard" class="logo"><i aria-hidden="true">✎</i>Learning Lab</a>
+  <span id="syncStatus" data-state="local">Saved in this browser</span>
+  <nav class="nav" aria-label="Main"><a href="#dashboard" data-nav="dashboard">My learning</a><a href="#catalog" data-nav="catalog">Study modules</a><a href="#journey" data-nav="journey">My journey</a><a href="#admin" data-nav="admin" id="adminNav" hidden>Admin</a></nav>
+  <div class="acct-wrap"><button id="avatarBtn" onclick="toggleMenu()" aria-label="Account menu" aria-haspopup="true" aria-expanded="false">?</button>
+    <div id="acctMenu" class="acct-menu" hidden><p><b id="acctEmail"></b><br><span class="hint" id="acctRole"></span></p><a href="#profile" onclick="closeMenu()">My profile</a><button onclick="signOut()">Sign out</button></div></div>
+</div></header>
+<main id="main"></main>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+/* PostHog (EU). Cookieless and privacy-first per the PRD: memory persistence, no autocapture, no session replay,
+   events carry ids and counts only, never answer text. The project token is a public write-only key. */
+!function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],Object.defineProperty(u,"toString",{configurable:!0,enumerable:!0,writable:!0,value:function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e}}),Object.defineProperty(u.people,"toString",{configurable:!0,enumerable:!0,writable:!0,value:function(){return u.toString(1)+".people (stub)"}}),o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagResult isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+posthog.init('phc_oFjfcowd3LkF4KbAcsYhrdvkN5NM9Fhw4S546uKa6PxX', {
+  api_host: 'https://eu.i.posthog.com',
+  defaults: '2026-08-30',
+  persistence: 'memory',
+  autocapture: false,
+  capture_pageview: false,
+  capture_pageleave: false,
+  capture_dead_clicks: false,
+  capture_heatmaps: false,
+  disable_session_recording: true,
+  disable_surveys: true,
+  capture_performance: false,
+  respect_dnt: true,
+  /* strip query strings (Firebase sign-in links carry a one-time code) from every URL-like property */
+  before_send: ev => { if (ev && ev.properties) for (const k of Object.keys(ev.properties)){
+    const v = ev.properties[k]; if (/url|referrer/i.test(k) && typeof v === "string") ev.properties[k] = v.split("?")[0]; } return ev; }
+});
+const track = (name, props) => { try { window.posthog && posthog.capture(name, props); } catch(e){} };
+</script>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {getAuth,onAuthStateChanged,isSignInWithEmailLink,signInWithEmailLink,sendSignInLinkToEmail,signOut as fbSignOut} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import {initializeFirestore,doc,collection,getDoc,setDoc,deleteDoc,getDocs} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+const app = initializeApp({apiKey:"AIzaSyBTWhzfM055_cefXiLwy0N3fVakknIO7wU",authDomain:"learning-lab-yezi.firebaseapp.com",projectId:"learning-lab-yezi",appId:"1:1088879615903:web:4c3f7b7459042371ca27aa"});
+const auth = getAuth(app), fs = initializeFirestore(app,{});
+const ADMIN_EMAIL = "yezi.lilyz@gmail.com";
+const seg = p => p.split("/");
+const wrap = ref => ({
+  async get(){ const s = await getDoc(ref); return {exists:s.exists(), id:ref.id, data:()=>s.exists()?JSON.parse(s.data().j):undefined}; },
+  async set(v){ await setDoc(ref,{j:JSON.stringify(v)}); },
+  async delete(){ await deleteDoc(ref); } });
+const db = { doc:p=>wrap(doc(fs,...seg(p))),
+  collection:p=>({ doc:id=>wrap(doc(fs,...seg(p),id)),
+    async get(){ const s = await getDocs(collection(fs,...seg(p))); return {docs:s.docs.map(d=>({id:d.id,exists:true,data:()=>JSON.parse(d.data().j)}))}; } }) };
+let linkError = null;
+const ready = (async () => {
+  if (isSignInWithEmailLink(auth, location.href)){
+    let email = null; try { email = localStorage.getItem("ll-signin-email"); } catch(e){}
+    if (!email) email = window.prompt("Confirm your email to finish signing in");
+    try { await signInWithEmailLink(auth, email, location.href); try { localStorage.removeItem("ll-signin-email"); } catch(e){}
+    } catch(e){ linkError = e.code || "error"; }
+    history.replaceState(null, "", location.pathname + "#dashboard");
+  }
+  await auth.authStateReady();
+  return auth.currentUser;
+})();
+window.FB = {ready, db, adminEmail:ADMIN_EMAIL, get linkError(){return linkError;},
+  async sendLink(email){ await sendSignInLinkToEmail(auth, email, {url:location.origin+location.pathname, handleCodeInApp:true}); try { localStorage.setItem("ll-signin-email", email); } catch(e){} },
+  async signOut(){ await fbSignOut(auth); },
+  user:{ id:async()=>auth.currentUser?.uid||null, canEdit:async()=>!!auth.currentUser && auth.currentUser.emailVerified && auth.currentUser.email===ADMIN_EMAIL,
+         me:async()=>({name:""}), profiles:async()=>({}) } };
+</script>
+<script>
+/* ===================== MODULE CATALOGUE ===================== */
+const num = s => parseFloat(String(s ?? "").replace(",", "."));
+const T = (id, title, ref, intro, fields, tip) => ({id, title, ref, intro, fields, tip});
+const R15 = "1 = Never · 2 = Rarely · 3 = Sometimes · 4 = Often · 5 = Always";
+const SKILLS = ["Pace","Fillers","Pitch","Posture","Body language","Eye contact","Facial expression","Confidence","Impact of words"];
+const O5 = ["1","2","3","4","5"];
+const DAYS10 = Array.from({length:10},(_,i)=>`Day ${i+1}`);
+
+function visionSentence(a){
+  if (!["who","outcome","current","why","when","how"].some(k=>has(a[k]))) return null;
+  const d = k => has(a[k]) ? a[k].trim() : "…";
+  return `Today, when ${d("who")} want to ${d("outcome")}, they have to ${d("current")}. This is unacceptable, because ${d("why")}. We envision a world where ${d("when")}. We’re bringing this world about through ${d("how")}.`;
+}
+function shiftSentence(a){
+  if (![a.mental,a.emotional,a.behavioral].some(has)) return null;
+  return `As a leader, I want to be more ${a.mental||"…"}, feel more ${a.emotional||"…"}, and act more ${a.behavioral||"…"}.`;
+}
+
+const BUILTIN = [
+/* ------------------------------------------------------------ */
+{ id:"exp", title:"The Experimental Leader", provider:"Ness Labs", color:"#3F7D4E", icon:"🧪",
+  blurb:"Lead with curiosity, adaptability and clarity without burning out. 25 neuroscience-backed tools, from cognitive scripts to tiny experiments.",
+  time:"6 modules · about 4–5 hours of exercises",
+  steps:[
+    ["Diagnose first","Start with Leadership challenges, ambitions and your bold shift. They set the lens for every later exercise, so be specific."],
+    ["Work module by module","Do each group after watching the matching lesson. Read the key terms panel before you start a tool."],
+    ["Run real experiments","Tools like the Pact and Team experiments only pay off if you actually run them. Come back to log Persist / Pivot / Pause after a week or two."],
+    ["Close the loop","Finish with the Change list, leadership style ratings and action plan, then open your brief and share your pact publicly."]],
+  glossary:[
+    ["Experimental mindset","Treating work and life as a series of experiments (hypothesis → action → learning) instead of a straight line to a fixed goal. Success becomes consistent action and learning, not hitting a predefined destination."],
+    ["Systematic curiosity","Deliberately exploring the space between what you know and what you don’t, guided by interest rather than anxiety. It’s the core idea behind Ness Labs and Tiny Experiments."],
+    ["Liminal space","An in-between period of transition: a new role, a reorg, a career pivot. Uncomfortable, but the best time to explore because old scripts have loosened."],
+    ["Self-anthropology","Observing your own work like a field researcher: for a day or more, jot time-stamped notes on energy, mood and insights, then look for patterns you can turn into a hypothesis."],
+    ["Cognitive scripts","Internalised templates for how things “should” unfold. Handy for routine situations, but they quietly steer big decisions about careers and identity."],
+    ["Sequel script","Assuming your next step must logically follow your last one, like a sequel. Also known as continuation bias or path dependence."],
+    ["Crowdpleaser script","Making choices based on what parents, peers, colleagues or society will approve of, rather than what you want."],
+    ["Epic script","The belief that life must revolve around one grand passion or purpose. It makes ordinary difficulties feel like failure and is fuelled by survivorship bias."],
+    ["Anxiety–curiosity switch","Uncertainty can trigger a threat response (anxiety) or an exploration response (curiosity). Leaders can learn to reframe the same unknown as something to investigate."],
+    ["Experimental (curiosity) compass","A map of the areas where you currently feel anxious versus curious, so you can see where to start experimenting."],
+    ["Map of Maybe","Taking one observation and generating several “maybe…” hypotheses before settling on an explanation. It stops you jumping to the first story."],
+    ["PACT","A tiny experiment written as “I will [action] for [duration]”. It should be Purposeful, Actionable, Continuous and Trackable, tracked with a simple yes/no rather than performance metrics."],
+    ["Plus Minus Next","A five-minute review in three columns: what went well, what didn’t, and what to try next."],
+    ["Persist · Pivot · Pause","The three ways to end an experiment: keep going as is, change one variable, or stop for now. Base the call on external signals (results, feedback) and internal ones (energy, enjoyment)."],
+    ["Affective labelling","Putting a feeling into words (“I feel frustrated and a bit embarrassed”). Naming an emotion has been shown to reduce its intensity, freeing you to think."],
+    ["Consequence cascade","Mapping the knock-on effects of a disruption, step by step, so you deal with real consequences instead of imagined ones."],
+    ["Mindful productivity","Managing three resources (physical energy, cognitive focus, emotional state) instead of managing minutes."],
+    ["Chronotype","Your natural daily energy rhythm: Lark (morning), Owl (evening) or Hummingbird (in between)."],
+    ["Magic window","The time of day when your energy, focus and mood line up. Protect it for your highest-leverage work and open it with a small anchor ritual."],
+    ["Triple Check","Treating procrastination as a signal, not a flaw. Ask whether the block is in the Head (am I convinced it’s the right task?), the Heart (is it enjoyable?) or the Hand (do I have the skills and resources?)."],
+    ["Social flow","A group flow state. Leaders enable it by modelling experimentation, building psychological safety, minimising status and ego, and creating feedback loops."],
+    ["Learning in public","Sharing your pact, progress and lessons openly: a public pledge, a platform and a rhythm of updates. It adds accountability and attracts fellow explorers."]],
+  groups:[
+   {name:"Set your direction", tools:[
+    T("challenges","My leadership challenges","Workbook p. 3","Tick the challenges that feel true right now, and add any that are missing.",[
+      {k:"list",type:"checklist",options:["Struggling to let go of control","Mistaking busyness for progress","Taking failure personally","Micromanaging out of fear","Being overwhelmed by change","Getting stuck in the weeds","Lacking strategic clarity","Failing to prioritize","Avoiding hard conversations","Not knowing how to coach","Struggling to inspire others"],custom:3}],
+      "Pick the 3 that cost you the most energy. You’ll pair them with tools in the Experimentalist toolkit."),
+    T("ambitions","My leadership ambitions","Workbook p. 4","What kind of leader do you want to become? Tick what resonates and add your own.",[
+      {k:"list",type:"checklist",options:["Inspire action and ownership","Make progress without needing all the answers","Build high-trust, high-performance teams","Handle hard conversations with confidence","Make better decisions under pressure","Coach others to grow and thrive","Navigate change with resilience","Create space for failure and learning","Help others feel safe to take smart risks","Build teams that think and adapt together","Be known as a leader people want to work with"],custom:3}]),
+    T("toolkit","My experimentalist toolkit","Workbook pp. 5–6","Pair each challenge with the tools from this course that address it, and the support you’ll need.",[
+      {k:"rows",type:"table",cols:["Challenge","Tool(s)","Support needed"],rows:6,rowLabels:["#1","#2","#3","#4","#5","#6"]}],
+      "Fill this in progressively: come back after each module and add the tool that best fits a challenge."),
+    T("boldshift","My bold shift","Workbook p. 8","Name the mental, emotional and behavioural shift you want to make.",[
+      {k:"mental",type:"text",label:"As a leader, I want to be more…",hint:"Mental shift"},
+      {k:"emotional",type:"text",label:"…feel more…",hint:"Emotional shift"},
+      {k:"behavioral",type:"text",label:"…and act more…",hint:"Behavioural shift"},
+      {k:"preview",type:"preview",render:a=>shiftSentence(a)||"Your sentence appears here as you type."}])
+   ]},
+   {name:"Think like a scientist", tools:[
+    T("anthropology","Self-anthropology exercise","Workbook p. 9","Observe your working life as if you were studying it from the outside.",[
+      {k:"time",type:"textarea",label:"How do I currently spend my time at work?"},
+      {k:"energy",type:"textarea",label:"What is giving me energy?"},
+      {k:"drain",type:"textarea",label:"What is draining my energy?"}],
+      "For one or two days, keep time-stamped field notes (time, activity, energy up/down, mood). Then summarise the patterns here rather than writing from memory."),
+    T("scripts","My cognitive scripts","Workbook p. 10","Notice when an inherited script is quietly steering your choices.",[
+      {k:"sequel",type:"textarea",label:"When might I be following the sequel script?",hint:"Doing what seems like the logical next step"},
+      {k:"crowd",type:"textarea",label:"When might I be following the crowdpleaser script?",hint:"Choosing what others will approve of"},
+      {k:"epic",type:"textarea",label:"When might I be following the epic script?",hint:"Waiting for one grand, perfect purpose"}],
+      "Question each script’s origin: “Am I doing this because it follows from my past, because it pleases others, or because I feel I must find my one purpose?”"),
+    T("ems","Experimental Mindset Scale","Workbook p. 11","For each pair, pick the statement closer to how you usually lead. Each B counts toward your experimental score.",[
+      {k:"items",type:"ab",pairs:[
+        ["I prefer to have a clear plan before I act.","I prefer to start small and adjust as I go."],
+        ["I get frustrated when I don’t have all the answers.","I stay calm even when information is missing."],
+        ["I want to get it right the first time.","I want to learn what works over time."],
+        ["I focus on avoiding mistakes.","I focus on learning from what doesn’t work."],
+        ["I lead by giving direction.","I lead by asking questions."],
+        ["Small disruptions can throw everything off.","Small disruptions are part of the process."],
+        ["I value consistency and predictability.","I value discovery and adaptability."],
+        ["I define success by what I achieve.","I define success by what I learn."],
+        ["Being caught off guard makes me uncomfortable.","I expect surprises and use them to learn."],
+        ["I try to avoid uncertain situations.","I lean into uncertain situations."]]},
+      {k:"reflection",type:"textarea",label:"What does your score tell you?"}],
+      "Answer for how you behave under pressure, not how you’d like to behave. Retake it at the end of the course and compare.")
+   ]},
+   {name:"Lead with curiosity", tools:[
+    T("switch","The anxiety-curiosity switch","Workbook p. 13","Spot your anxiety triggers, then pick one place to practise switching.",[
+      {k:"when",type:"textarea",label:"When do I tend to become more anxious and less curious?"},
+      {k:"situation",type:"textarea",label:"What is one current situation where I can switch from anxiety to curiosity?"}],
+      "A simple reframe: replace “What if this goes wrong?” with “What could I learn here?”"),
+    T("compass","The experimental compass","Workbook p. 14","Map where you currently feel anxious versus curious.",[
+      {k:"anxious",type:"textarea",label:"Anxious",hint:"Areas of anxiety"},
+      {k:"curious",type:"textarea",label:"Curious",hint:"Areas of curiosity"}]),
+    T("maybe","The Map of Maybe","Workbook p. 15","Start from one observation and generate several possible explanations before settling on one.",[
+      {k:"observation",type:"textarea",label:"Observation",hint:"Something you noticed, stated as a fact"},
+      {k:"maybes",type:"list",label:"Hypotheses",prefix:"Maybe…",count:6}],
+      "Aim for at least one hypothesis that blames the system, one that blames you and one that’s surprising."),
+    T("pact","The Pact","Workbook p. 17","Turn a hypothesis into a tiny experiment: I will [action] for [duration].",[
+      {k:"rows",type:"table",cols:["I will…","for…","Tracking question (yes/no)"],rows:3},
+      {k:"check",type:"checklist",label:"PACT check",options:["Purposeful: I’m genuinely curious about it","Actionable: I can start with what I have today","Continuous: it repeats, not a one-off","Trackable: a simple yes/no each time"],custom:0}],
+      "Think small. “I will ask one open question in every 1:1 for 3 weeks” beats “I will become a better coach”.")
+   ]},
+   {name:"Make better decisions", tools:[
+    T("radar","The decision radar","Workbook p. 18","Think of people whose decisions affect you. Are they mostly anxiety-driven or curiosity-driven?",[
+      {k:"rows",type:"table",rows:3,rowLabels:["Person #1","Person #2","Person #3"],cols:["Name",{name:"Decision style",opts:["Anxiety-driven","Curiosity-driven","Mixed"]},"What I notice"]}]),
+    T("steering","The steering sheet","Workbook p. 19","Review a running experiment and decide whether to persist, pivot or pause.",[
+      {k:"experiment",type:"text",label:"Which experiment are you reviewing?"},
+      {k:"plus",type:"textarea",label:"Plus · what went well?"},
+      {k:"minus",type:"textarea",label:"Minus · what didn’t?"},
+      {k:"external",type:"textarea",label:"External signals",hint:"Results, feedback, data"},
+      {k:"internal",type:"textarea",label:"Internal signals",hint:"Energy, enjoyment, curiosity"},
+      {k:"decision",type:"choice",label:"Decision",options:["Persist","Pivot","Pause"]},
+      {k:"will",type:"textarea",label:"Next · I will…"}],
+      "Use it at the end of each pact. Good signals on both sides → persist; mixed → pivot one variable; both poor → pause without guilt.")
+   ]},
+   {name:"Navigate uncertainty", tools:[
+    T("matrix","The change confidence matrix","Workbook p. 20","Weigh the benefits and costs of changing against not changing.",[
+      {k:"topic",type:"text",label:"What change are you considering?"},
+      {k:"m",type:"table",rows:2,rowLabels:["Change","No change"],cols:["Benefits","Costs"]}],
+      "Most people forget the costs of not changing. Fill that cell first."),
+    T("reset","The two-step reset","Workbook p. 21","When something disrupts your plans, process how it feels, then manage what it causes.",[
+      {k:"disruption",type:"text",label:"What was the disruption?"},
+      {k:"labels",type:"textarea",label:"Step 1 · Affective labelling",hint:"Name your emotional response as precisely as you can"},
+      {k:"cascade",type:"textarea",label:"Step 2 · Consequence cascade",hint:"One knock-on effect per line, then what you’ll do about each"}])
+   ]},
+   {name:"Work sustainably", tools:[
+    T("window","My magic window","Workbook p. 23","Protect the time when your physical, cognitive and emotional resources line up.",[
+      {k:"chrono",type:"choice",label:"Physical · My chronotype",options:["Lark","Hummingbird","Owl"]},
+      {k:"when",type:"text",label:"When is my magic window?"},
+      {k:"factors",type:"textarea",label:"Other factors",hint:"e.g. caregiving, poor sleep, long commute"},
+      {k:"work",type:"textarea",label:"Cognitive · My highest-leverage work",hint:"e.g. writing, strategic thinking, creative work"},
+      {k:"load",type:"textarea",label:"Current sources of distraction and cognitive load"},
+      {k:"ritual",type:"textarea",label:"Emotional · My anchor ritual",hint:"e.g. quick stretch, music, a walk, making tea"}]),
+    T("triple","The Triple Check","Workbook p. 24","Run a task you’ve been putting off through head, heart and hand.",[
+      {k:"task",type:"text",label:"Task I’m procrastinating on"},
+      {k:"head",type:"choice",label:"Head · Is the task appropriate?",options:["Yes","Partly","No"]},
+      {k:"heart",type:"choice",label:"Heart · Is the task enjoyable?",options:["Yes","Partly","No"]},
+      {k:"hand",type:"choice",label:"Hand · Is the task doable?",options:["Yes","Partly","No"]},
+      {k:"adjust",type:"textarea",label:"What would make every answer a yes?"}],
+      "Head block → rethink the strategy or discuss it with a colleague. Heart block → pair it with something enjoyable or reward yourself. Hand block → break it down or ask for help."),
+    T("selfreg","Self-regulation practices","Workbook p. 25","List the practices that help you regulate in the moment and over time.",[
+      {k:"short",type:"textarea",label:"Short-term · Nervous system regulation",hint:"e.g. slow breathing, a walk, affective labelling"},
+      {k:"long",type:"textarea",label:"Long-term · Metacognitive regulation",hint:"e.g. weekly Plus Minus Next, journaling"}])
+   ]},
+   {name:"Unlock social flow", tools:[
+    T("team","Team experiments","Workbook p. 27","Design experiments with your team: we will [action] for [duration].",[
+      {k:"rows",type:"table",cols:["We will…","for…"],rows:5}]),
+    T("socialflow","Social flow self-check","Workbook p. 28","Rate yourself from 1 (never) to 5 (always).",[
+      {k:"s",type:"score",max:5,items:["I model and reward experimentation","I try to foster psychological safety","I minimize status and ego","I help create feedback loops","I know when to step back"]}]),
+    T("public","Learning in public","Workbook p. 29","Make your pact public so others can support it.",[
+      {k:"pledge",type:"textarea",label:"Public pledge",hint:"Who will you announce your pact to?"},
+      {k:"platform",type:"textarea",label:"Public platform",hint:"Where will you share your progress?"},
+      {k:"practice",type:"textarea",label:"Public practice",hint:"How often will you share updates?"}])
+   ]},
+   {name:"Bring it together", tools:[
+    T("changelist","My change list","Workbook p. 7","Capture your key takeaway from each module.",[
+      {k:"rows",type:"table",cols:["Key takeaway"],rows:6,rowLabels:["Module 1","Module 2","Module 3","Module 4","Module 5","Module 6"]}]),
+    T("style","My experimental leadership style","Workbook p. 31","Rate your current skills from 1 to 10.",[
+      {k:"items",type:"sliders",items:["Think like a scientist","Lead with curiosity","Navigate uncertainty","Make better decisions","Work sustainably","Unlock social flow"]}]),
+    T("action","My action plan","Workbook p. 32","Commit to concrete next steps.",[
+      {k:"rows",type:"table",cols:["What","By when","With whom"],rows:5},
+      {k:"next",type:"textarea",label:"Very first action",hint:"Be specific"}])
+   ]}],
+  highlights:A=>[["My bold shift",shiftSentence(A("boldshift"))],["My very first action",A("action").next]]
+},
+/* ------------------------------------------------------------ */
+{ id:"pd", title:"Product Discovery Certification", provider:"Pendo × Mind the Product", color:"#8C3B5E", icon:"🔍",
+  blurb:"Run a data-driven discovery process: framework, risks, opportunity trees, assumption maps, RICE and the data checklist.",
+  time:"5 modules · exam: 20 questions, 60 min, 75% to pass",
+  steps:[
+    ["Pick one real initiative","Every tool works best when you apply it to the same live problem. Name it in the framework canvas first."],
+    ["Go from problem to solution","Follow the order: framework → risks → interviews → opportunity tree → assumptions → RICE. Don’t score solutions before you’ve mapped the problem."],
+    ["Check your data","Use the data checklist to make sure you combine research, feedback, analytics and testing."],
+    ["Prepare for the exam","Rate your confidence per topic, revisit weak areas in the key terms, then take the open-book exam with your brief beside you."]],
+  glossary:[
+    ["Product discovery","Understanding customers’ problems and needs, then validating or rejecting solutions before development."],
+    ["Continuous discovery","Weekly touchpoints with customers by the team building the product, running small research activities in pursuit of a desired outcome."],
+    ["What customers do · feel · want","The foundation of discovery: behaviour inside your app, sentiment about it, and feedback and requests."],
+    ["Five tenets","User empathy, collaboration, prioritization, measurement and continuous learning."],
+    ["Four big risks","Value (will they want it?), usability (can they use it?), feasibility (can we build it?) and business viability (does it work for the business?)."],
+    ["Confirmation bias","Seeking out sources and evidence that confirm what you already believe."],
+    ["Bandwagon effect","Prioritising a direction because many people voice support for it."],
+    ["Authority bias","Giving unmerited weight to the opinion of someone senior."],
+    ["Jobs to Be Done","People “hire” products to get a job done; focus on the job, not the product."],
+    ["Opportunity solution tree","A visual path from a desired outcome, through opportunities (problems), to solutions and the experiments that test them."],
+    ["Assumption mapping","Plotting assumptions by importance and certainty. Important and uncertain ones are tested first."],
+    ["RICE","Reach × Impact × Confidence ÷ Effort, a way to compare solutions during discovery."],
+    ["Smoke (fake door) test","Testing demand for something that doesn’t exist yet with a minimal representation of it."],
+    ["Funnels · Paths · Session replay","Analytics tools for spotting friction: drop-off across defined steps, what users do before and after a page, and watching real sessions."],
+    ["Three gaps","Systematic, skill and insight gaps that hold back a discovery practice."]],
+  groups:[
+   {name:"Fundamentals", tools:[
+    T("framework","Discovery framework canvas","Study guide p. 12","Walk one real discovery effort through the six parts of the framework.",[
+      {k:"outcome",type:"textarea",label:"Part 1 · Define the outcome",hint:"Which business goal are you trying to move?"},
+      {k:"problems",type:"textarea",label:"Part 2 · Understand users’ problems"},
+      {k:"problem",type:"textarea",label:"Part 3 · Identify the problem to solve"},
+      {k:"solutions",type:"textarea",label:"Part 4 · Explore possible solutions"},
+      {k:"validate",type:"textarea",label:"Part 5 · Test and validate solutions"},
+      {k:"loop",type:"textarea",label:"Part 6 · Close the loop",hint:"Who needs to hear the results?"}],
+      "Tie Part 1 to one of the four business outcomes: retention, revenue growth, reduced costs or risk mitigation."),
+    T("risks","The four big risks","Study guide p. 7","Rate how exposed your idea is to each risk.",[
+      {k:"idea",type:"text",label:"Idea or initiative"},
+      {k:"rates",type:"ratelist",items:["Value risk","Usability risk","Feasibility risk","Business viability risk"],options:["Low","Medium","High"]},
+      {k:"plan",type:"textarea",label:"How will you reduce the highest risk?"}]),
+    T("questions","Interview guide","Study guide pp. 7–8","Pick the discovery questions you’ll use, and add your own.",[
+      {k:"who",type:"text",label:"Who will you interview?"},
+      {k:"qs",type:"checklist",options:["What is your role and your most important tasks?","What are your current pain points?","How do you currently solve these pain points or needs?","What are the biggest challenges you encounter when trying to achieve X?","What would an ideal solution look like from your perspective?","How easy is our product to use?","Are there any features you wish the product had?","If you could change one thing about our product, what would it be?","Are there any features that you don’t find valuable or rarely use?","How has our product helped improve your business outcomes?"],custom:3}],
+      "Open-ended, non-leading, focused on pain points, asking for specific examples, aware of context."),
+    T("ost","Opportunity solution tree","Study guide p. 8","Map the paths from a desired outcome to opportunities, solutions and tests.",[
+      {k:"outcome",type:"text",label:"Desired outcome"},
+      {k:"rows",type:"table",cols:["Opportunity","Solution","Assumption test"],rows:6}]),
+    T("assumptions","Assumption map","Study guide p. 8","Plot each assumption by importance and certainty.",[
+      {k:"rows",type:"table",rows:6,cols:["Assumption",{name:"Importance",opts:["High","Low"]},{name:"Certainty",opts:["Known","Unknown"]}],computeLabel:"Next move",
+        compute:r=>{const i=r[1],c=r[2]; if(!i||!c) return ""; return i==="High"?(c==="Unknown"?"Test first":"Proceed"):(c==="Unknown"?"Monitor":"Deprioritise");}}]),
+    T("rice","RICE scoring","Study guide p. 8","Reach × Impact × Confidence ÷ Effort. Enter confidence as a percentage.",[
+      {k:"rows",type:"table",rows:6,cols:["Solution",{name:"Reach",num:1},{name:"Impact",num:1},{name:"Confidence %",num:1},{name:"Effort",num:1}],computeLabel:"Score",
+        compute:r=>{const R=num(r[1]),I=num(r[2]),C=num(r[3]),E=num(r[4]); return [R,I,C,E].every(Number.isFinite)&&E>0?(R*I*(C/100)/E).toFixed(1):"";}}],
+      "Keep units consistent: reach per quarter, impact on a 0.25–3 scale, effort in person-months.")
+   ]},
+   {name:"Data-driven tactics & scaling", tools:[
+    T("data","Data-driven discovery checklist","Study guide pp. 13–14","Tick the data sources you’re using for this discovery effort.",[
+      {k:"used",type:"checklist",options:["User interviews","In-app surveys","Competitive research","Proactive feedback via in-app guides","Always-on in-app feedback portal","Funnels","Paths","Session replay","Number of users experiencing friction","ARR associated with those accounts","Discovery dashboards","Smoke tests (fake door)","Prototyping","A/B testing","Usability testing"],custom:1},
+      {k:"ai",type:"textarea",label:"Where could AI speed this up?"}]),
+    T("audit","Discovery practice audit","Study guide pp. 6–11","Be honest about the mistakes, gaps and biases in your team’s discovery today.",[
+      {k:"mistakes",type:"ratelist",label:"Common mistakes",items:["Excluding engineers or designers","Jumping to solutions before nailing the problem","Only doing discovery pre-launch","Researching to validate existing assumptions","Skipping quantitative data"],options:["Not us","Sometimes","Often"]},
+      {k:"gaps",type:"ratelist",label:"Gaps",items:["Systematic gaps","Skill gaps","Insight gaps"],options:["None","Some","Big"]},
+      {k:"biases",type:"ratelist",label:"Biases",items:["Confirmation bias","Bandwagon effect","Authority bias"],options:["Rarely","Sometimes","Often"]},
+      {k:"change",type:"textarea",label:"One change I’ll make"}]),
+    T("exam","Exam readiness","Study guide p. 4","20 multiple-choice questions, 60 minutes, 75% to pass, open book.",[
+      {k:"conf",type:"sliders",items:["Why we need to get discovery right (20%)","Discovery fundamentals (30%)","Data-driven tactics (30%)","Scaling discovery (20%)"]},
+      {k:"gaps",type:"textarea",label:"Concepts to revisit"}])
+   ]}]
+},
+/* ------------------------------------------------------------ */
+{ id:"pl", title:"Product-led Certification", provider:"Pendo × Mind the Product", color:"#C2410C", icon:"🚀",
+  blurb:"Put the product at the centre of every function: Jobs to be Done, data stack, launch plans, feedback policy and customer health scoring.",
+  time:"6 lessons · exam: 30 questions, 90 min, 75% to pass",
+  steps:[
+    ["Start with the job","Do Jobs to be Done first. Every later exercise (metrics, launch, health score) should serve that job."],
+    ["Pick one goal for the data stack","e.g. improve retention or reduce tickets. Then choose metrics from the 10 product-led KPIs."],
+    ["Plan a real launch","Use an upcoming feature. Measure breadth, time to adopt and duration of adoption, not just usage."],
+    ["Operationalise","Write the feedback policy, then a first health score. Both are meant to evolve: iterate as you learn."]],
+  glossary:[
+    ["Product-led organization","A business that makes its product the vehicle for acquiring and retaining customers, driving growth and influencing priorities. Broader than product-led growth: sales, marketing, education and support all converge inside the product."],
+    ["Six characteristics","Align every function around the product; decide with data; use the product as a marketing channel; amazing onboarding; help users help themselves; collect and use feedback."],
+    ["Jobs to be Done (JTBD)","Why customers “hire” your product. Main and related jobs each have functional aspects (utility) and emotional aspects, split into personal (how they feel) and social (how others see them) dimensions. TurboTax: main job = complete a tax return."],
+    ["Net revenue retention (NRR)","Revenue kept from existing customers over a period: expansion minus downsell and churn. Healthy products aim above 100%."],
+    ["Stickiness","How often users return: DAU/MAU, DAU/WAU or WAU/MAU, chosen to match how often the product should be used."],
+    ["Product Engagement Score (PES)","The average of adoption, stickiness and growth: one number for engagement, easy to decompose."],
+    ["Time to value · aha moment","How long until a new user gets value. Slack’s 2,000 messages and Facebook’s 7 friends in 10 days are famous aha thresholds."],
+    ["NPS","% promoters (9–10) minus % detractors (0–6). Benchmark against yourself over time, by account and by user."],
+    ["Feature adoption: breadth, time, duration","How widely a feature is used, how quickly users try it, and whether they keep using it. All three matter."],
+    ["Product feedback policy","A short document telling customers where to submit feedback, how often it’s reviewed and how they’ll hear back."],
+    ["Product Ops","The function between product, engineering and customer success that tightens feedback loops, systematises launches and scales product knowledge."],
+    ["PQL vs MQL","Product-qualified leads have experienced value in the product (trial, freemium); marketing-qualified leads have only consumed marketing."],
+    ["Freemium vs trial","Freemium gives part of the product free indefinitely; a trial gives all of it for a limited time. Trials convert more, freemium keeps prospects around."],
+    ["Customer health score","A weighted mix of signals (adoption, support, sentiment, purchasing) that flags who needs attention. Rapid7 started with adoption 40%, support 35%, purchasing 25%."]],
+  groups:[
+   {name:"Exercises", tools:[
+    T("jtbd","Identify your Jobs to be Done","Workbook, Module 2","Define why people use your product, then break the job into its functional and emotional sides.",[
+      {k:"main",type:"textarea",label:"Main Job to be Done"},
+      {k:"functional",type:"textarea",label:"Functional aspects",hint:"2–4"},
+      {k:"emotional",type:"textarea",label:"Emotional aspects",hint:"2–4"},
+      {k:"personal",type:"textarea",label:"Personal dimensions"},
+      {k:"social",type:"textarea",label:"Social dimensions"},
+      {k:"related",type:"list",label:"Related Jobs to be Done",count:5,numbered:true},
+      {k:"reflect",type:"textarea",label:"How does this map to the solution you offer today?"}],
+      "Ask customers, not just your team, and don’t settle for answers that validate the status quo."),
+    T("data","Define your data stack","Workbook, Module 3","Start from one goal, list your data sources and what they track, then settle on decision metrics.",[
+      {k:"goal",type:"text",label:"Goal or Job to be Done"},
+      {k:"sources",type:"table",cols:["Data source","Metrics it tracks"],rows:6},
+      {k:"final",type:"list",label:"Final metrics, ranked",count:5,numbered:true}],
+      "Start from questions (“Are new users trying the feature?”), then pick metrics that answer them, rather than starting from a metric list."),
+    T("launch","Launch plan that accelerates adoption","Workbook, Module 4","What success looks like, how you’ll communicate, and how you’ll hear back.",[
+      {k:"feature",type:"text",label:"Feature being launched"},
+      {k:"goals",type:"table",cols:["Goal"],rows:3,rowLabels:["30 days","60 days","90 days"]},
+      {k:"comms",type:"table",cols:["Audience","Channel","Level of detail"],rows:5},
+      {k:"feedback",type:"textarea",label:"How will you collect customer feedback?"},
+      {k:"improve",type:"textarea",label:"How will you use data and feedback after launch?"}],
+      "Target announcements to the users the feature is relevant to, and give one clear next action (try it, read the doc, give feedback)."),
+    T("policy","Customer feedback policy","Workbook, Module 4","Document the five parts of your feedback policy.",[
+      {k:"approach",type:"textarea",label:"Your approach to product feedback"},
+      {k:"how",type:"textarea",label:"How customers can provide feedback"},
+      {k:"after",type:"textarea",label:"What happens to feedback"},
+      {k:"faqs",type:"textarea",label:"FAQs"},
+      {k:"share",type:"textarea",label:"Sharing your policy"}],
+      "Four steps behind it: one place for feedback, a transparent review process, communicating back, and getting sales and CS on board."),
+    T("health","Customer health scoring model","Workbook, Module 6","Turn signals into a health score and decide what to do for each type of customer.",[
+      {k:"signals",type:"textarea",label:"Every metric that might signal health"},
+      {k:"groups",type:"list",label:"Groups of metrics (score components)",count:6,numbered:true},
+      {k:"initial",type:"textarea",label:"Initial components",hint:"3–4 you can use with today’s data"},
+      {k:"medium",type:"textarea",label:"Medium-term components"},
+      {k:"long",type:"textarea",label:"Long-term components"},
+      {k:"weights",type:"table",rows:5,cols:["Initial component",{name:"Weight %",num:1}],
+        footer:rows=>{const s=rows.reduce((a,r)=>a+(Number.isFinite(num(r?.[1]))?num(r[1]):0),0); return s?`Total: ${s}%${s===100?" — balanced":" — adjust to reach 100%"}`:"";}},
+      {k:"healthy",type:"textarea",label:"Plan for healthy customers"},
+      {k:"neutral",type:"textarea",label:"Plan for neutral customers",hint:"Rapid7’s lesson: this is where extra attention pays off most"},
+      {k:"unhealthy",type:"textarea",label:"Plan for unhealthy customers"}]),
+    T("exam","Exam readiness","Study guide","30 multiple-choice questions, 90 minutes, 75% to pass, open book.",[
+      {k:"conf",type:"sliders",items:["Fundamentals of being product led (20%)","Leveraging data (16%)","Delivering products differently (12%)","Driving customer success (16%)","Marketing and selling for growth (20%)","Implementing at your organization (16%)"]},
+      {k:"gaps",type:"textarea",label:"Concepts to revisit"}])
+   ]}]
+},
+/* ------------------------------------------------------------ */
+{ id:"rpt", title:"Radical Product Thinking: Vision", provider:"Radical Product × Pendo", color:"#B8862B", icon:"🎯",
+  blurb:"Write a radical vision statement that acts as a filter, diagnose product diseases, and use vision fit vs. survival to prioritise.",
+  time:"6 modules · quiz: 15 questions, 60 min, 75% to pass",
+  steps:[
+    ["Diagnose before you write","Run the product disease check. It tells you why your team needs a sharper vision and helps get buy-in."],
+    ["Write the source code, not a tagline","Fill in who, what, why, when and how. Ask “so what?” on the why until it resonates for you and your customers."],
+    ["Translate into strategy and priorities","Use RDCL, then place real backlog items on vision fit vs. survival."],
+    ["Use it every week","Bring it into sprint planning and stakeholder conversations. Review it monthly in a startup, quarterly or half-yearly in a mature product."]],
+  glossary:[
+    ["Product vision","A statement of the overarching purpose of your product. In RPT it’s the “source code”: detailed and specific; marketing can write the tagline later."],
+    ["A vision as a filter","A good vision lets you hold up a feature and sometimes say “no, don’t do it”. Big, broad visions (“contributing to human progress”) filter nothing."],
+    ["Three qualities","Centered on the problem (not your aspirations), shared by your team and customers, and helps you visualise a concrete end state."],
+    ["Who · What · Why · When · How","Whose world you change; what their problem looks like today; why the status quo is unacceptable; what the world looks like when it’s solved; how your product brings it about."],
+    ["The “so what?” test","Keep asking “so what?” about your why until the answer resonates deeply, as with Pendo’s Michelle Grupinski revising her vision."],
+    ["Three pillars","Your product is your mechanism for change; envision the change clearly first; then systematically engineer it."],
+    ["Elements of RPT","Vision → strategy → prioritization → execution and measurement → culture, with plenty of back-and-forth."],
+    ["RDCL strategy","Real pain points, Design (the solution), Capabilities (what you need to build it) and Logistics (how you deliver and charge for it)."],
+    ["Vision fit vs. survival","Ideal (good for both), Investing in the vision (long-term good, short-term costly, e.g. user research), Vision debt (helps survival, hurts vision, e.g. a custom feature for a big deal) and Danger (bad for both)."],
+    ["Product diseases","Pivotitis, Strategic Swelling, Narcissus Complex, Obsessive Sales Disorder, Hero Syndrome, Hypermetricemia and Locked-In Syndrome."],
+    ["Hippocratic Oath of product","Builders must take responsibility for users’ wellbeing and bake it into vision, strategy, priorities and metrics, as Lijjat did by measuring women given financial independence."]],
+  groups:[
+   {name:"Vision", tools:[
+    T("diseases","Product disease check","Study guide p. 9","Diagnose which product diseases your product shows.",[
+      {k:"rates",type:"ratelist",items:["Hero Syndrome — scale over real impact","Strategic Swelling — too much for too many users","Hypermetricemia — obsession with metrics","Narcissus Complex — focused on our own needs","Obsessive Sales Disorder — features for one customer","Locked-In Syndrome — committed to a platform, not a problem","Pivotitis — rapid, frequent changes in direction"],options:["Absent","Mild","Severe"]},
+      {k:"treat",type:"textarea",label:"Which one will you treat first, and how?"}]),
+    T("vision","Radical vision statement","Study guide p. 10","Fill in each part; your statement builds itself below.",[
+      {k:"who",type:"text",label:"Who · Today, when…",hint:"A specific group, not everyone"},
+      {k:"outcome",type:"text",label:"What · …want to…",hint:"What they want to accomplish, not the task (get reimbursed, not file an expense report)"},
+      {k:"current",type:"text",label:"What · …they have to…",hint:"Their current activity or solution"},
+      {k:"why",type:"text",label:"Why · This is unacceptable, because…",hint:"Ask “so what?” a few times"},
+      {k:"when",type:"text",label:"When · We envision a world where…",hint:"No fluff words like revolutionise or democratise"},
+      {k:"how",type:"text",label:"How · We’re bringing this world about through…",hint:"Only now describe your product"},
+      {k:"preview",type:"preview",render:a=>visionSentence(a)||"Your statement appears here as you fill in the parts."},
+      {k:"test",type:"checklist",label:"Does it pass the three qualities?",options:["It’s centered on the problem","It’s shared by the team and customers","It helps visualize a concrete end state"],custom:0}],
+      "It’s fine if it reads like a short essay. Radhika’s TV ad sales vision was “uninspiring” and still aligned the team because it was authentic.")
+   ]},
+   {name:"Strategy & use", tools:[
+    T("rdcl","RDCL strategy","Study guide p. 7","Translate the vision into strategy.",[
+      {k:"r",type:"textarea",label:"Real pain points · What’s the user’s pain?"},
+      {k:"d",type:"textarea",label:"Design · What does our solution look like?"},
+      {k:"c",type:"textarea",label:"Capabilities · How do we enable those capabilities?"},
+      {k:"l",type:"textarea",label:"Logistics · How do we deliver it?"}],
+      "Personas you left out of the who (e.g. sellers in a buyer-focused marketplace) get addressed here."),
+    T("prioritize","Vision fit vs. survival","Study guide p. 7","Place each initiative on the two axes to see its quadrant.",[
+      {k:"rows",type:"table",rows:6,cols:["Initiative",{name:"Vision fit",opts:["Good","Poor"]},{name:"Survival",opts:["Improves","Worsens"]}],computeLabel:"Quadrant",
+        compute:r=>{const f=r[1],s=r[2]; if(!f||!s) return ""; return f==="Good"?(s==="Improves"?"Ideal":"Investing in the vision"):(s==="Improves"?"Vision debt":"Danger");}},
+      {k:"debt",type:"textarea",label:"How will you pay down any vision debt?"}],
+      "Use it visually with sales: a custom feature in Vision debt next to an Ideal item makes the trade-off less contentious."),
+    T("apply","Use your vision","Study guide p. 8","Put the vision to work in everyday decisions.",[
+      {k:"rethink",type:"choice",label:"Do you need to rethink the vision?",options:["No","Market changed","Low traction or decline","Product diseases"]},
+      {k:"align",type:"textarea",label:"How will you align the team on it?",hint:"Early buy-in, a group exercise, an external facilitator, or an indirect approach"},
+      {k:"sprint",type:"textarea",label:"Sprint planning"},
+      {k:"comms",type:"textarea",label:"Communication with stakeholders"},
+      {k:"strategy",type:"textarea",label:"Strategic planning"}]),
+    T("exam","Quiz readiness","Study guide p. 4","15 multiple-choice questions, 60 minutes, 75% to pass, open book.",[
+      {k:"conf",type:"sliders",items:["Intro to the RPT methodology (33%)","What makes a good vision statement (20%)","Breaking down real vision statements (20%)","How to use your vision statement (27%)"]},
+      {k:"gaps",type:"textarea",label:"Concepts to revisit"}])
+   ]}],
+  highlights:A=>[["My radical vision",visionSentence(A("vision"))]]
+},
+/* ------------------------------------------------------------ */
+{ id:"bg", title:"Buying Product Experience Software", provider:"Pendo buyer’s guide", color:"#4F6D7A", icon:"🧾",
+  blurb:"Build the business case for a product experience tool: outcomes, ROI, stakeholder objections and a center of excellence.",
+  time:"4 chapters · about 2 hours",
+  steps:[
+    ["Pick 2–4 outcomes","More than four dilutes the case. Tie each to revenue, cost savings or risk mitigation."],
+    ["Quantify","Fill the worksheet with real numbers and benchmarks, then run the ROI calculator."],
+    ["Map stakeholders","Anticipate each buyer stakeholder’s objection and prepare your answer before the meeting."],
+    ["Plan adoption","Staff a center of excellence so the tool is actually used after purchase."]],
+  glossary:[
+    ["Business case","Turns high-level outcomes into specific, quantified value for your organization so stakeholders understand the ROI."],
+    ["ROI","(Investment gain − cost of investment) ÷ cost of investment."],
+    ["Investment gain","Money generated or saved, plus time saved and the extra work it enables."],
+    ["Cost of investment","Primary costs (licensing, services, integration) plus indirect costs (implementation and training)."],
+    ["Buyer stakeholders","Leaders who decide or can block: product leadership, engineering, security, legal, data science."],
+    ["User stakeholders","Teams who will use the tool: product management, design, customer success, marketing."],
+    ["Center of excellence (COE)","A central team that standardises best practice and drives adoption: project, department, technical and methodology leads."]],
+  groups:[
+   {name:"Build the case", tools:[
+    T("outcomes","Identify business outcomes","Guide pp. 8–10","Pick the 2–4 outcomes that matter most and the areas of value they tie to.",[
+      {k:"outcomes",type:"checklist",options:["Increase conversion, adoption, and retention","Make data-driven product development decisions","Reduce reliance on development resources","Collect and prioritize user feedback","Decrease time to market","Reduce strain on support teams","Improve your customer’s experience"],custom:1},
+      {k:"value",type:"checklist",label:"Areas of value",options:["Revenue","Cost savings","Risk mitigation"],custom:0}]),
+    T("whynow","Why now?","Guide p. 6","How true is each situation for your team today?",[
+      {k:"rates",type:"ratelist",items:["We lack visibility into usage, adoption or sentiment","We get product data manually or not at all","We can’t tell what drives churn, retention or growth"],options:["Not true","Partly","Very true"]},
+      {k:"cost",type:"textarea",label:"What are we losing by waiting?"}]),
+    T("case","Business case worksheet","Guide pp. 11–13","Quantify each outcome you picked.",[
+      {k:"rows",type:"table",rows:4,cols:["Business outcome","Pain today","How to quantify it","Benchmark","Potential impact"]}],
+      "Example: reduce support strain → X hours a month on tickets costing Y → 5–15% benchmark reduction → 10–25% of Y saved."),
+    T("roi","ROI calculator","Guide p. 12","Use the same currency throughout.",[
+      {k:"roi",type:"roi"},
+      {k:"assumptions",type:"textarea",label:"Assumptions behind these numbers"}])
+   ]},
+   {name:"Get buy-in", tools:[
+    T("buyers","Buyer stakeholders","Guide pp. 15–20","Name who you’ll bring along, the objection you expect, and your answer.",[
+      {k:"rows",type:"table",rows:5,rowLabels:["Product leadership","Engineering","Security","Legal","Data science"],cols:["Person","Likely objection","Our answer"]},
+      {k:"enterprise",type:"textarea",label:"Data residency, privacy and access requirements to check"}]),
+    T("users","User stakeholders","Guide pp. 21–23","Who will use the tool, and what’s in it for them?",[
+      {k:"rows",type:"table",rows:4,rowLabels:["Product management","Design","Customer success","Marketing"],cols:["Person","What’s in it for them"]}]),
+    T("coe","Center of excellence","Guide pp. 24–26","Staff the COE and plan its launch.",[
+      {k:"roles",type:"table",rows:4,rowLabels:["Project lead","Department lead","Technical lead","Methodology lead"],cols:["Who","First responsibility"]},
+      {k:"launch",type:"checklist",label:"Launch checklist",options:["Prepare a COE communication plan","Sustain engagement with internal customers","Share business impact","Run regular surveys"],custom:0}])
+   ]}]
+},
+/* ------------------------------------------------------------ */
+{ id:"lead", title:"Leadership Exercise Workbook", provider:"SITMI", color:"#7A4B2A", icon:"🌱",
+  blurb:"14 exercises on self-awareness, business acumen, strategic thinking, communication, and the traits that make leaders trusted.",
+  time:"14 exercises · two 10-day practices",
+  steps:[
+    ["Self-awareness first","Do exercises 1–3 together: reflection, 360° feedback and personality tests, then synthesise strengths and weaknesses."],
+    ["Know the business","Answer the business acumen questions honestly. If you can’t answer half, pause and learn before moving on."],
+    ["Practise daily for 10 days","Exercises 7 and 8 are habits. Log one row per day."],
+    ["Score, then act","The trait self-checks score automatically. Turn your lowest areas into a 30-day plan."]],
+  glossary:[
+    ["360° feedback","Feedback from your manager, peers, customers and team on the same questions. Anonymous surveys get more honest answers."],
+    ["Perception gap","The difference between how you rate yourself and how others rate you. The largest gaps are where to focus first."],
+    ["Business acumen","Understanding how your company makes money, competes and measures success: revenue, margin, profit, ROI and cash flow."],
+    ["Strategic thinking","Connecting today’s tasks to tomorrow’s trends and leadership priorities, and acting before being asked."],
+    ["Accountability","Ownership + initiative + integrity: following through, admitting mistakes and owning team outcomes."],
+    ["Psychological safety","A shared belief that people won’t be punished for speaking up, asking questions or making mistakes."],
+    ["Thomas-Kilmann model","Five conflict styles (competing, collaborating, compromising, avoiding, accommodating) used to explore your default approach."],
+    ["Pause – Listen – Clarify – Resolve","A structured approach for tense discussions recommended for “strong but growing” conflict handlers."]],
+  groups:[
+   {name:"Self-awareness", tools:[
+    T("ex1","Your own reflection","Exercise 1","Your accomplishments and the strengths behind them, then failures and missed opportunities.",[
+      {k:"wins",type:"table",label:"Top accomplishments",cols:["Accomplishment","Key strengths behind it"],rows:5},
+      {k:"fails",type:"table",label:"Top failures",cols:["Failure","Opportunity that was missing"],rows:5}]),
+    T("ex2","Others’ perspective (360°)","Exercise 2","Rate yourself, then enter each group’s average (1–5) to see the gap.",[
+      {k:"rows",type:"table",rows:15,rowLabels:["Clear and effective communication","Actively listens","Approachable, easy to collaborate with","Gives constructive feedback","Receives feedback openly","Accountable and reliable","Handles stress and setbacks","Builds trust","Shows empathy","Encourages teamwork and growth","Problem-solving and decisions","Growth mindset","Leadership presence","Balances tasks and relationships","Ethics and integrity"],
+        cols:[{name:"Self",num:1},{name:"Manager",num:1},{name:"Peers",num:1},{name:"Customers",num:1},{name:"Team",num:1}],computeLabel:"Others · gap",
+        compute:r=>{const s=num(r[0]); const o=[1,2,3,4].map(i=>num(r[i])).filter(Number.isFinite); if(!o.length) return ""; const av=o.reduce((a,b)=>a+b,0)/o.length; if(!Number.isFinite(s)) return av.toFixed(1); const g=s-av; return `${av.toFixed(1)} · ${g>0?"+":""}${g.toFixed(1)}`;}},
+      {k:"admire",type:"textarea",label:"One strength people admire most in me"},
+      {k:"improve",type:"textarea",label:"One area where I could improve"}],
+      "Send the survey via Google Forms or Microsoft Forms. More inputs give better insight; a positive gap means you rate yourself higher than others do."),
+    T("ex3","Personality tests and synthesis","Exercise 3","Take free tests from 4–5 sources, then synthesise across exercises 1–3.",[
+      {k:"tests",type:"table",label:"Tests taken",cols:["Test","Result or type","Key insight"],rows:5},
+      {k:"strengths",type:"table",label:"Key strengths",cols:["Strength","How to polish it (3 small actions)"],rows:5},
+      {k:"weak",type:"table",label:"Key weaknesses",cols:["Weakness","How to overcome it (3 small actions)"],rows:5}],
+      "Free options include 16Personalities, HIGH5, Truity, IDRlabs and OpenPsychometrics. Keep strengths that appear in at least two exercises.")
+   ]},
+   {name:"Business and strategy", tools:[
+    T("ex4","Business acumen","Exercise 4","Answer each question about your business.",[
+      ...["What are the top 3 strategic goals of my company this year?","How does my company make money?","What are my company’s unique strategies against competitors?","Who are our key customers, and what problems do we solve?","Who are our top competitors, and how do we differentiate?","What are the biggest risks or challenges right now?","How does my role impact the company’s goals and finances?","What do revenue, margin, profit, ROI and cash flow mean for us?","How do departments work together to deliver results?","What industry trends could impact us in 1–3 years?","Could I confidently brief a leader on our biggest priorities?","What don’t I understand yet about my company, but should?","Who can I connect with to learn more?","What’s one step this week to build my business knowledge?"].map((q,i)=>({k:"q"+i,type:"textarea",label:q})),
+      {k:"conf",type:"choice",label:"How many could you answer confidently?",options:["More than half","About half","Fewer than half"]}]),
+    T("ex5","Connect today’s work to tomorrow","Exercise 5","For your top 5 tasks: value now, trends ahead, and what to start today.",[
+      {k:"rows",type:"table",rows:5,cols:["My task","Current value to the org","Future impact or trend","Future-ready thinking"]}]),
+    T("ex6","Align with leadership and customers","Exercise 6","Map leadership priorities and customer goals to how your team supports them.",[
+      {k:"leaders",type:"table",label:"Leadership priorities",rows:5,cols:["Priority","High-level actions by leadership","How can my team support?"]},
+      {k:"customers",type:"table",label:"Customer priorities",rows:4,cols:["Customer goal","How can my team support?"]},
+      {k:"share",type:"textarea",label:"When will I share this back with leadership?"}])
+   ]},
+   {name:"Influencing communication", tools:[
+    T("ex7","10-day video practice","Exercise 7","Record a 3-minute video daily, watch it, rate each skill 1–5.",[
+      {k:"days",type:"table",rows:10,rowLabels:DAYS10,cols:[{name:"Topic"},...SKILLS.map(s=>({name:s,opts:O5}))],computeLabel:"Day total",
+        compute:r=>{const v=r.slice(1).map(num).filter(Number.isFinite); return v.length?`${v.reduce((a,b)=>a+b,0)}/${v.length*5}`:"";},
+        footer:rows=>{const t=SKILLS.map((s,i)=>[s,rows.reduce((a,r)=>a+(Number.isFinite(num(r?.[i+1]))?num(r[i+1]):0),0)]); if(!t.some(x=>x[1])) return ""; const low=[...t].sort((a,b)=>a[1]-b[1]).slice(0,2).map(x=>x[0]); return `Lowest totals so far: ${low.join(" and ")}.`;}},
+      {k:"improved",type:"textarea",label:"What improved?"},
+      {k:"work",type:"textarea",label:"What needs work?"}]),
+    T("ex8","Speaker observation habit","Exercise 8","One video a day from a speaker you admire, for 10 days.",[
+      {k:"rows",type:"table",rows:10,rowLabels:DAYS10,cols:["Speaker or source","What influenced me","Habit I applied"]}])
+   ]},
+   {name:"Leadership traits", tools:[
+    T("ex9","Check your passion","Exercise 9","Rate each from 1 to 10. Below 7 on any one is a signal to reignite.",[
+      {k:"s",type:"score",max:10,mode:"avg",flagBelow:7,items:["How excited am I to show up for my job every morning?","How much do I care about helping my team grow?","When I talk about my goals, do I feel fire rather than pressure?"],
+        bands:[[7,"Fired up","Keep reconnecting with your why and celebrating small wins."],[0,"Signal to reignite","Reconnect with your why, celebrate small wins, spend time with energetic people, learn something new."]]}]),
+    T("ex10","Are you accountable?","Exercise 10","Rate each statement from 1 to 10.",[
+      {k:"s",type:"score",max:10,items:["I take ownership without being reminded.","I meet deadlines even when no one is watching.","I admit mistakes and fix them.","I follow through on commitments.","I proactively update others.","I go beyond my job description when needed.","I seek clarity instead of assuming.","I own team outcomes.","I stay solution-focused in setbacks.","I hold others accountable respectfully."],
+        bands:[[90,"Highly accountable","You own your work and lead by example."],[70,"Moderately accountable","Solid foundation, a few blind spots."],[50,"Needs attention","Build better follow-through."],[0,"Low accountability","Rebuild trust and take stronger ownership."]]},
+      {k:"goal",type:"text",label:"One micro-goal for the next 30 days"}]),
+    T("ex11","Relationship building","Exercise 11",`Rate each statement. ${R15}.`,[
+      {k:"s",type:"score",max:5,sections:[
+        {name:"Manager or senior leaders",items:["I keep my manager updated proactively.","I clarify expectations and support needs.","I adapt to my manager’s communication style.","I ask for developmental feedback.","I understand my manager as a person."]},
+        {name:"Team members",items:["I check in beyond work updates.","I know their motivators and goals.","I celebrate wins publicly.","I build a safe space to share.","I tailor my style to each person."]},
+        {name:"Peers",items:["I reach out without waiting for a need.","I collaborate through disagreements.","I understand other teams’ pressures.","I share information transparently.","I’ve built alliances with key stakeholders."]},
+        {name:"Customers and partners",items:["I engage beyond transactional updates.","I listen without defensiveness.","I ask open-ended questions about their goals.","I close the loop after meetings.","I invest in long-term trust."]},
+        {name:"Personal habits",items:["I acknowledge people personally.","I remember details that matter to people.","I help without expecting a return.","I avoid gossip.","I stay in touch with former colleagues."]}],
+        bands:[[100,"Relationship leader","Trusted, connected and influential."],[75,"Solid networker","Strong instincts; deepen consistency."],[50,"Aware builder","Needs more deliberate effort."],[0,"Growth opportunity","Make relationships a bigger priority."]]},
+      {k:"plan",type:"table",label:"30-day action plan",rows:3,cols:["Area","Behaviour to practise","How I’ll know it’s working"]}]),
+    T("ex12","Check your empathy","Exercise 12",`Rate each statement. ${R15}.`,[
+      {k:"s",type:"score",max:5,items:["I understand emotions before offering solutions.","I adapt my communication to individuals.","I check in on well-being, not just performance.","I listen to understand, not to respond.","People approach me with sensitive concerns.","I notice when someone is upset.","I adjust feedback to the person.","I listen without distractions.","My recognition is specific.","I seek context before judging behaviour."],
+        bands:[[41,"Highly empathetic","Next: mentor others, start a “Wins & Worries” segment."],[31,"Empathetic leader","Deepen listening under stress or change."],[21,"Developing empathy","Follow up within 48 hours, personalise feedback."],[0,"Low empathy awareness","Weekly reflection, the 3-second rule, emotional check-ins."]]},
+      {k:"plan",type:"table",label:"30-day action plan",rows:3,cols:["Area","Action"]}]),
+    T("ex13","Conflict management","Exercise 13",`Rate each statement. ${R15}.`,[
+      {k:"s",type:"score",max:5,items:["I stay calm in tense situations.","I understand all sides first.","I address conflicts early.","I create a safe space for concerns.","I separate the person from the issue.","I involve others for fair solutions.","I give feedback without blame.","I’m open to feedback when I’m part of it.","I follow up after resolution.","I mediate without taking sides."],
+        bands:[[41,"Conflict master","Mentor others and handle multi-party conflicts."],[31,"Strong but growing","Use Pause – Listen – Clarify – Resolve."],[21,"Needs development","Journal avoided conflicts; practise role-plays."],[0,"At risk","Seek coaching; tackle one avoided issue in 2 weeks."]]},
+      {k:"plan",type:"table",label:"30-day action plan",rows:3,cols:["Area","Action"]}]),
+    T("ex14","Inclusion and belonging","Exercise 14",`Rate each statement. ${R15}.`,[
+      {k:"s",type:"score",max:5,items:["Everyone shares ideas comfortably.","I seek diverse perspectives.","Contributions are recognised equally.","People can be themselves.","We celebrate different experiences.","I speak up when someone is overlooked.","Feedback is acted on without bias.","New members feel welcome.","Equal growth opportunities for all.","Interactions build trust and safety."],
+        bands:[[40,"High inclusion","Keep building and mentoring others."],[30,"Moderate","Focus on consistency and trust."],[20,"Low","Inclusion is in structure, not behaviour."],[0,"Critical","Urgent cultural change needed."]]},
+      {k:"plan",type:"table",label:"30-day action plan",rows:3,cols:["Area","Action"]}])
+   ]}]
+}];
+function prepModule(m){ m.tools = m.groups.flatMap(g => g.tools.map(t => ({...t, group:g.name}))); return m; }
+BUILTIN.forEach(m => { prepModule(m); m.builtin = true; });
+let MODULES = BUILTIN.slice();   /* visible catalogue, rebuilt by rebuildCatalog() */
+let ALL_MODULES = BUILTIN.slice(); /* everything ever known, so old answers stay reachable */
+/* ===================== ADMIN DATA ===================== */
+const LS_ADMIN = "learning-lab-admin-v1";
+const DEFAULT_PORTAL_URL = "https://claude.ai/artifact/MpUAWgGuqvbKgSgfyPoKKg";
+let ADMIN = {catalog:{}, config:{hidden:[], portalUrl:DEFAULT_PORTAL_URL}};
+let isAdmin = false, runtime = "local";          /* runtime: "local" (browser only) or "claude" (signed-in viewer) */
+try { const r = localStorage.getItem(LS_ADMIN); if (r) ADMIN = Object.assign(ADMIN, JSON.parse(r)); } catch(e){}
+const demoAdmin = () => localStorage.getItem(LS_ADMIN + "::demo") === "1";
+
+function rebuildCatalog(){
+  const uploaded = Object.values(ADMIN.catalog).map(c => { try { return Object.assign(hydrate(c.spec), {status:c.status}); } catch(e){ return null; } }).filter(Boolean);
+  ALL_MODULES = [...BUILTIN, ...uploaded.filter(u => !BUILTIN.some(b => b.id === u.id))];
+  MODULES = ALL_MODULES.filter(m => m.builtin ? !ADMIN.config.hidden.includes(m.id) : m.status === "published");
+}
+async function saveCatalogEntry(id){
+  try { localStorage.setItem(LS_ADMIN, JSON.stringify(ADMIN)); } catch(e){}
+  if (runtime === "claude" && remote.db){
+    const ref = remote.db.doc("catalog/" + id);
+    if (ADMIN.catalog[id]) await ref.set(ADMIN.catalog[id]); else await ref.delete();
+  }
+}
+async function saveConfig(){
+  try { localStorage.setItem(LS_ADMIN, JSON.stringify(ADMIN)); } catch(e){}
+  if (runtime === "claude" && remote.db) await remote.db.doc("config/portal").set(ADMIN.config);
+}
+async function loadShared(){
+  if (!remote.db) return;
+  try {
+    const [cat, cfg] = await Promise.all([remote.db.collection("catalog").get(), remote.db.doc("config/portal").get()]);
+    ADMIN.catalog = {}; cat.docs.forEach(d => { if (d.exists) ADMIN.catalog[d.id] = d.data(); });
+    if (cfg.exists) ADMIN.config = Object.assign({hidden:[], portalUrl:DEFAULT_PORTAL_URL}, cfg.data());
+    rebuildCatalog();
+  } catch(e){}
+}
+
+/* ===================== MODULE SPEC (declarative JSON) ===================== */
+const FIELD_TYPES = {
+  text:"Single-line answer", textarea:"Multi-line answer", preview:"Live sentence built from a template, e.g. \"I will {action} for {duration}\"",
+  checklist:"Tick boxes; options[], custom = number of free-text slots", table:"Grid; cols[] (string or {name, opts[], num}), rows, rowLabels[], compute, footer",
+  list:"Numbered or prefixed list; count, numbered, prefix", choice:"Single choice pills; options[]", ratelist:"Rate each of items[] with options[]",
+  score:"Self-assessment; max, items[] or sections[{name, items[]}], mode (\"total\"|\"avg\"), bands[[min, label, advice]], flagBelow",
+  ab:"Pick A or B for each of pairs[[A, B]]; counts B answers", sliders:"1–10 slider for each of items[]", roi:"ROI calculator (gain, primary and indirect costs)"};
+const FORMULA_OK = /^[c0-9+\-*/(). ]+$/;
+
+function makeCompute(c){
+  if (c.op === "formula"){ const fn = new Function("c", "return " + c.expr.replace(/c(\d+)/g, "c[$1]"));
+    return r => { const v = (r||[]).map(num); if (!(c.expr.match(/c\d+/g)||[]).every(x => Number.isFinite(v[+x.slice(1)]))) return ""; const out = fn(v); return Number.isFinite(out) ? out.toFixed(c.decimals ?? 1) + (c.suffix||"") : ""; }; }
+  if (c.op === "sum" || c.op === "avg"){ return r => { const v = (c.cols||[]).map(i => num(r?.[i])).filter(Number.isFinite); if (!v.length) return ""; const s = v.reduce((a,b)=>a+b,0); return (c.op==="sum" ? s : (s/v.length).toFixed(1)) + (c.suffix||""); }; }
+  if (c.op === "lookup"){ return r => { const key = (c.cols||[]).map(i => r?.[i]||"").join("|"); return c.map?.[key] || ""; }; }
+  return () => "";
+}
+function makeFooter(f){
+  return rows => { const s = rows.reduce((a,r) => a + (Number.isFinite(num(r?.[f.col])) ? num(r[f.col]) : 0), 0); if (!s) return "";
+    return `${f.label||"Total"}: ${s}${f.suffix||""}${f.target!=null ? (s===f.target ? " — on target" : ` — target ${f.target}${f.suffix||""}`) : ""}`; };
+}
+function hydrate(spec){
+  const m = JSON.parse(JSON.stringify(spec));
+  m.groups.forEach(g => g.tools.forEach(t => t.fields.forEach(f => {
+    if (f.type === "table"){ if (f.compute) f.compute = makeCompute(f.compute); if (f.footer) f.footer = makeFooter(f.footer); }
+    if (f.type === "preview"){ const tpl = f.template || ""; const keys = (tpl.match(/\{(\w+)\}/g)||[]).map(x => x.slice(1,-1));
+      f.render = a => keys.some(k => has(a[k])) ? tpl.replace(/\{(\w+)\}/g, (_,k) => has(a[k]) ? String(a[k]).trim() : "…") : (f.placeholder || "Your sentence appears here as you type."); }
+  })));
+  m.color ||= "#B4520A"; m.icon ||= "📘"; m.steps ||= []; m.glossary ||= []; m.time ||= "";
+  const hl = spec.highlights || [];
+  m.highlights = get => hl.map(h => { const tool = m.groups.flatMap(g=>g.tools).find(t=>t.id===h.tool); const f = tool?.fields.find(x=>x.k===h.field); const a = get(h.tool);
+    return [h.label, f?.type==="preview" ? (keysFilled(f, a) ? f.render(a) : null) : a[h.field]]; });
+  m.uploaded = true; return prepModule(m);
+}
+const keysFilled = (f, a) => ((f.template||"").match(/\{(\w+)\}/g)||[]).some(x => has(a[x.slice(1,-1)]));
+
+function validateSpec(spec, raw){
+  const E = [], W = [], arr = v => Array.isArray(v) && v.length;
+  if (!spec || typeof spec !== "object") return {errors:["The file isn’t a JSON object."], warnings:[]};
+  if (raw && raw.length > 200000) E.push("The file is over 200 KB. Split it into two modules.");
+  if (!/^[a-z0-9]{2,24}$/.test(spec.id||"")) E.push("id must be 2–24 lowercase letters or digits (it’s used in links).");
+  else if (BUILTIN.some(b => b.id === spec.id)) E.push(`id “${spec.id}” is taken by a built-in module. Choose another.`);
+  if (!spec.title) E.push("title is required.");
+  if (!spec.blurb) W.push("blurb is empty: learners see it on the catalogue card.");
+  if (!arr(spec.steps)) W.push("steps is empty: add “How to proceed” guidance as [heading, detail] pairs.");
+  else spec.steps.forEach((s,i) => { if (!Array.isArray(s) || s.length !== 2) E.push(`steps[${i}] must be [heading, detail].`); });
+  if (!arr(spec.glossary)) W.push("glossary is empty: key terms help learners most.");
+  else spec.glossary.forEach((s,i) => { if (!Array.isArray(s) || s.length !== 2) E.push(`glossary[${i}] must be [term, definition].`); });
+  if (spec.color && !/^#[0-9a-fA-F]{6}$/.test(spec.color)) E.push("color must be a hex value like #0E7A6E.");
+  if (!arr(spec.groups)) { E.push("groups must contain at least one group of tools."); return {errors:E, warnings:W}; }
+  const toolIds = new Set(); let toolCount = 0;
+  spec.groups.forEach((g, gi) => {
+    if (!g.name) E.push(`groups[${gi}] needs a name.`);
+    if (!arr(g.tools)) { E.push(`Group “${g.name||gi}” has no tools.`); return; }
+    g.tools.forEach((t, ti) => {
+      toolCount++; const where = `Tool “${t.title || t.id || ti}”`;
+      if (!/^[a-z0-9]{1,24}$/.test(t.id||"")) E.push(`${where}: id must be lowercase letters or digits.`);
+      else if (toolIds.has(t.id)) E.push(`${where}: id “${t.id}” is used twice.`); else toolIds.add(t.id);
+      if (!t.title) E.push(`${where}: title is required.`);
+      if (!arr(t.fields)) { E.push(`${where}: needs at least one field.`); return; }
+      const ks = new Set();
+      t.fields.forEach((f, fi) => {
+        const at = `${where}, field ${fi+1}`;
+        if (!f.k) E.push(`${at}: k (field key) is required.`); else if (ks.has(f.k)) E.push(`${at}: key “${f.k}” is used twice.`); else ks.add(f.k);
+        if (!FIELD_TYPES[f.type]) { E.push(`${at}: unknown type “${f.type}”. Use one of ${Object.keys(FIELD_TYPES).join(", ")}.`); return; }
+        const need = (cond, msg) => { if (!cond) E.push(`${at} (${f.type}): ${msg}`); };
+        if (["text","textarea","list","choice"].includes(f.type)) need(f.label, "label is required.");
+        if (f.type === "checklist") need(arr(f.options), "options[] is required.");
+        if (f.type === "choice") need(arr(f.options), "options[] is required.");
+        if (f.type === "ratelist") { need(arr(f.items), "items[] is required."); need(arr(f.options), "options[] is required."); }
+        if (f.type === "sliders") need(arr(f.items), "items[] is required.");
+        if (f.type === "list") need(f.count > 0 && f.count <= 30, "count must be 1–30.");
+        if (f.type === "ab") need(arr(f.pairs) && f.pairs.every(p => Array.isArray(p) && p.length === 2), "pairs must be [[A, B], …].");
+        if (f.type === "preview") need(/\{\w+\}/.test(f.template||""), "template must reference at least one {fieldKey}.");
+        if (f.type === "score") { need(f.max >= 2 && f.max <= 10, "max must be 2–10."); need(arr(f.items) || (arr(f.sections) && f.sections.every(s => arr(s.items))), "items[] or sections[{name, items[]}] is required.");
+          if (f.bands) need(Array.isArray(f.bands) && f.bands.every(b => Array.isArray(b) && b.length >= 2), "bands must be [[minScore, label, advice], …] from highest to lowest."); }
+        if (f.type === "table") { need(arr(f.cols), "cols[] is required."); need(f.rows > 0 && f.rows <= 40, "rows must be 1–40.");
+          if (f.rowLabels) need(f.rowLabels.length === f.rows, "rowLabels must have one label per row.");
+          if (f.compute) { need(["formula","sum","avg","lookup"].includes(f.compute.op), "compute.op must be formula, sum, avg or lookup.");
+            if (f.compute.op === "formula") need(FORMULA_OK.test(f.compute.expr||""), "compute.expr may only use c0, c1… numbers and + - * / ( ).");
+            need(f.computeLabel, "computeLabel is required when compute is set."); } }
+      });
+    });
+  });
+  if (spec.highlights) spec.highlights.forEach((h,i) => { if (!toolIds.has(h.tool)) E.push(`highlights[${i}] points to unknown tool “${h.tool}”.`); });
+  return {errors:E, warnings:W, toolCount};
+}
+
+const SAMPLE_SPEC = {
+  id:"okr", title:"OKR Writing Workbook", provider:"Your team", icon:"🎯", color:"#0E7A6E",
+  blurb:"Write one quarter’s objectives and key results, score their quality, and commit to a first experiment.",
+  time:"3 tools · about 45 minutes",
+  steps:[["Start from the outcome","Write the objective as a change you want to see, not a task."],["Make results measurable","Each key result needs a number and a baseline."],["Score honestly","Use the quality check before you share the OKRs."],["Commit","End with one action you’ll take this week."]],
+  glossary:[["Objective","A qualitative, inspiring statement of where you want to go this quarter."],["Key result","A measurable outcome that shows you reached the objective, with a baseline and a target."],["Leading indicator","A metric that moves before the outcome does and tells you early if you’re on track."]],
+  groups:[{name:"Write", tools:[
+    {id:"objective", title:"Objective", ref:"Step 1", intro:"State the change you want this quarter.", tip:"If it starts with a verb like “launch” or “build”, it’s probably a task. Ask “so that…?”",
+     fields:[{k:"who",type:"text",label:"For whom?"},{k:"change",type:"text",label:"What changes for them?"},{k:"preview",type:"preview",template:"This quarter, we will help {who} {change}."}]},
+    {id:"krs", title:"Key results", ref:"Step 2", intro:"Add up to five key results with a baseline, target and confidence.",
+     fields:[{k:"rows",type:"table",rows:5,cols:["Key result",{name:"Baseline",num:1},{name:"Target",num:1},{name:"Confidence",opts:["Low","Medium","High"]}],
+       computeLabel:"Change %",compute:{op:"formula",expr:"(c2-c1)/c1*100",decimals:0,suffix:"%"}}]}]},
+   {name:"Check", tools:[
+    {id:"quality", title:"Quality check", ref:"Step 3", intro:"Rate your OKRs from 1 to 5.",
+     fields:[{k:"s",type:"score",max:5,items:["The objective is an outcome, not a task","Every key result has a number","Every key result has a baseline","We can track progress weekly"],
+       bands:[[17,"Ready to share","Send them out for feedback."],[12,"Nearly there","Fix the lowest-rated item first."],[0,"Rework","Rewrite the objective as an outcome, then redo the key results."]]},
+      {k:"next",type:"textarea",label:"My first action this week"}]}]}],
+  highlights:[{label:"Objective",tool:"objective",field:"preview"},{label:"First action",tool:"quality",field:"next"}]
+};
+
+/* ===================== MAGIC-LINK SIGN-IN (prototype) ===================== */
+const hexEncode = s => Array.from(new TextEncoder().encode(s), b => b.toString(16).padStart(2,"0")).join("");
+const hexDecode = h => new TextDecoder().decode(new Uint8Array(h.match(/../g).map(x => parseInt(x,16))));
+function makeToken(email, minutes, invitedBy, role){
+  return hexEncode(JSON.stringify({e:email.toLowerCase(), x:Date.now()+minutes*60000, n:Math.random().toString(36).slice(2,10), i:invitedBy||null, r:role||"learner"}));
+}
+const validEmail = e => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);
+const usedTokens = () => { try { return JSON.parse(localStorage.getItem(LS + "::used")||"[]"); } catch(e){ return []; } };
+
+function setHash(h){ try { history.replaceState(null, "", h); } catch(e){ location.hash = h; } }
+function authShell(inner){
+  document.body.classList.add("auth");
+  main().innerHTML = `<section class="wrap auth-wrap"><div class="auth-split">
+    <div class="auth-brand"><p class="eyebrow">Welcome to Learning Lab</p>
+      <h1>Your workbooks, saved and tracked</h1>
+      <ul class="auth-points"><li>Work through interactive workbooks at your own pace</li><li>Every answer saves as you type, on any device</li><li>Download a brief of everything you’ve written</li></ul>
+      <p class="hint">No password. We email you a link that signs you in.</p></div>
+    <div class="card auth-card">${inner}</div></div></section>`;
+}
+function viewSignin(sent, mode){
+  mode ||= sent?.mode || "learner";
+  if (sent){
+    authShell(`<p class="eyebrow">Sign in</p><h2>Check your inbox</h2>
+      <p>We sent a sign-in link to <b>${esc(sent.email)}</b>. It works once and expires in 15 minutes.</p>
+      <p class="hint">Open the link on this device. Check your spam folder if it doesn’t arrive within a minute.</p>
+      <button class="btn ghost" id="backBtn">Use a different email</button>`);
+    backBtn.onclick = () => viewSignin(null, mode); return;
+  }
+  authShell(`<h2>Sign in</h2>
+    <p class="hint">Enter your email and we’ll send you a one-time sign-in link. New here? The same link creates your account.</p>
+    <form id="signinForm" onsubmit="return false"><div class="field"><label for="sEmail">Email</label><input type="text" inputmode="email" autocomplete="email" id="sEmail" placeholder="you@company.com"></div>
+      <p class="err" id="sErr" role="alert"></p><button class="btn primary wide" id="sSend">Email me a sign-in link</button></form>
+`);
+  sSend.onclick = async () => { const e = sEmail.value.trim(); if (!validEmail(e)){ sErr.textContent = "Enter a valid email address, like name@company.com."; sEmail.focus(); return; }
+    sSend.disabled = true; sErr.textContent = "";
+    try { await FB.sendLink(e); track("signin_link_requested", {method:"signin"}); viewSignin({email:e, mode:"learner", sent:true}); }
+    catch(err){ console.error(err); sSend.disabled = false; sErr.textContent = "We couldn’t send the link. Try again in a minute."; } };
+  sEmail.addEventListener("keydown", e => { if (e.key === "Enter") sSend.click(); });
+}
+function handleAuth(hex){
+  setHash("#signin"); return viewSignin(); /* unsigned prototype links are disabled in production */
+  let t = null; try { t = JSON.parse(hexDecode(hex)); } catch(e){}
+  const fail = msg => { authShell(`<h2>This link doesn’t work</h2><p>${msg}</p><button class="btn primary" id="newLink">Send a new link</button>`); newLink.onclick = () => { setHash("#signin"); viewSignin(); }; };
+  if (!t || !validEmail(t.e||"")) return fail("The link is incomplete. Copy the whole link from the email, or request a new one.");
+  if (Date.now() > t.x) return fail("The link has expired. Sign-in links last 15 minutes and invitations last 7 days.");
+  if (usedTokens().includes(t.n)) return fail("This link has already been used. Each link signs you in once.");
+  try { localStorage.setItem(LS + "::used", JSON.stringify([...usedTokens(), t.n].slice(-200))); } catch(e){}
+  signInAs(t.e, t.i ? "invite" : "magic-link", t.r);
+}
+async function signInAs(email, method, role){
+  switchLocalUser(email);
+  S.session = {email, method, role:role||"learner", signedInAt:new Date().toISOString()};
+  if (S.profile) S.profile.email = email;
+  let msg = `Signed in as ${email}`;
+  if (role === "admin"){
+    if (runtime === "claude"){ if (!isAdmin) msg = "This account doesn’t have admin access, so you’re signed in as a learner."; }
+    else { localStorage.setItem(LS_ADMIN + "::demo", "1"); isAdmin = true; }
+  } else if (runtime === "local"){ localStorage.setItem(LS_ADMIN + "::demo", "0"); isAdmin = false; }
+  persistProfile(); toast(msg);
+  setHash(role === "admin" && isAdmin && S.profile ? "#admin" : S.profile ? "#dashboard" : "#profile"); route();
+}
+function signOut(){ try { FB.signOut(); posthog.reset(); sessionStorage.removeItem("ll-ph-signin"); } catch(e){} saveLocal(); S = freshState(); try { localStorage.removeItem(LS + "::current"); localStorage.removeItem(LS); } catch(e){} closeMenu(); toast("Signed out"); setHash("#signin"); route(); }
+function closeMenu(){ const m = document.getElementById("acctMenu"); if (m) m.hidden = true; const b = document.getElementById("avatarBtn"); if (b) b.setAttribute("aria-expanded","false"); }
+function toggleMenu(){ const m = document.getElementById("acctMenu"), b = document.getElementById("avatarBtn"); m.hidden = !m.hidden; b.setAttribute("aria-expanded", String(!m.hidden));
+  document.getElementById("acctEmail").textContent = S.session?.email || ""; document.getElementById("acctRole").textContent = isAdmin ? "Admin" : "Learner"; }
+document.addEventListener("click", e => { if (!e.target.closest("#avatarBtn, #acctMenu")) closeMenu(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeMenu(); });
+
+/* ===================== ADMIN CONSOLE ===================== */
+let uploadDraft = null;
+function viewAdmin(tab){
+  tab ||= "modules";
+  if (!isAdmin){ main().innerHTML = `<section class="wrap"><div class="card empty-card"><h1>Admins only</h1><p>Ask the portal owner for Editor access to manage modules and learners.</p></div></section>`; return; }
+  const tabs = [["modules","Modules"],["upload","Upload a module"],["invite","Invite learners"],["learners","Learner progress"]];
+  main().innerHTML = `<section class="wrap"><p class="eyebrow">Admin</p><h1>Manage Learning Lab</h1>
+    ${false?`<p class="proto">Prototype mode: you’re an admin in this browser only, and changes stay here. Shared with Editor access on claude.ai, the same console saves for every learner.</p>`:""}
+    <nav class="tabs" aria-label="Admin sections">${tabs.map(([k,l])=>`<a href="#admin/${k}" ${k===tab?'aria-current="page"':""}>${l}</a>`).join("")}</nav>
+    <div id="adminBody"></div></section>`;
+  ({modules:adminModules, upload:adminUpload, invite:adminInvite, learners:adminLearners}[tab] || adminModules)(document.getElementById("adminBody"));
+}
+function adminModules(box){
+  const enrolledHere = id => !!S.enrolled[id];
+  box.innerHTML = `<div class="card"><div class="row-between"><h2>Modules</h2><button class="btn primary" onclick="go('#admin/upload')">Upload a module</button></div>
+    <div class="tbl-wrap"><table class="btable admin-table"><thead><tr><th>Module</th><th>Source</th><th>Status</th><th>Tools</th><th>Actions</th></tr></thead><tbody>
+    ${ALL_MODULES.map(m => { const hidden = m.builtin && ADMIN.config.hidden.includes(m.id), status = m.builtin ? (hidden?"Hidden":"Published") : (m.status==="published"?"Published":"Draft");
+      return `<tr><td><span class="mod-icon sm">${m.icon}</span> <b>${esc(m.title)}</b><br><span class="hint">${esc(m.provider||"")}${enrolledHere(m.id)?" · in your learning":""}</span></td>
+      <td>${m.builtin?"Built-in":"Uploaded"}</td><td><span class="status ${status.toLowerCase()}">${status}</span></td><td>${m.tools.length}</td>
+      <td class="acts"><button class="btn ghost sm" onclick="go('#m/${m.id}')">Preview</button>
+      ${m.builtin ? `<button class="btn ghost sm" data-toggle-hide="${m.id}">${hidden?"Show in catalogue":"Hide"}</button>`
+        : `<button class="btn ghost sm" data-toggle-pub="${m.id}">${m.status==="published"?"Unpublish":"Publish"}</button><button class="btn ghost sm" data-dl="${m.id}">Download JSON</button><button class="btn ghost sm danger" data-del="${m.id}">Delete</button>`}</td></tr>`; }).join("")}
+    </tbody></table></div><p class="hint">Hiding or unpublishing removes a module from the catalogue. Learners who already added it keep their answers and can still open it.</p></div>`;
+  box.querySelectorAll("[data-toggle-hide]").forEach(b => b.onclick = async () => { const id = b.dataset.toggleHide, h = ADMIN.config.hidden;
+    ADMIN.config.hidden = h.includes(id) ? h.filter(x=>x!==id) : [...h, id]; await saveConfig(); rebuildCatalog(); toast("Catalogue updated"); viewAdmin("modules"); });
+  box.querySelectorAll("[data-toggle-pub]").forEach(b => b.onclick = async () => { const c = ADMIN.catalog[b.dataset.togglePub];
+    c.status = c.status === "published" ? "draft" : "published"; c.updatedAt = new Date().toISOString(); await saveCatalogEntry(b.dataset.togglePub); rebuildCatalog(); if (c.status === "published") track("module_published", {module_id:b.dataset.togglePub}); toast(c.status==="published"?"Published":"Moved to draft"); viewAdmin("modules"); });
+  box.querySelectorAll("[data-dl]").forEach(b => b.onclick = () => download(`${b.dataset.dl}-module.json`, JSON.stringify(ADMIN.catalog[b.dataset.dl].spec, null, 2), "application/json"));
+  box.querySelectorAll("[data-del]").forEach(b => b.onclick = async () => { if (!confirm("Delete this module for everyone? Learners’ answers stay in their accounts but the module disappears.")) return;
+    delete ADMIN.catalog[b.dataset.del]; await saveCatalogEntry(b.dataset.del); rebuildCatalog(); toast("Module deleted"); viewAdmin("modules"); });
+}
+function adminUpload(box){
+  box.innerHTML = `<div class="up-grid"><div class="card">
+      <h2>Upload a module</h2><p>Modules are JSON files that describe the workbook: steps, key terms, groups, tools and fields. Start from the template.</p>
+      <div class="actions"><button class="btn ghost" id="tplDl">Download template</button><button class="btn ghost" id="tplLoad">Load template here</button></div>
+      <label class="drop" id="drop" for="fileIn"><input type="file" id="fileIn" accept=".json,application/json"><b>Drop a .json file here</b><span class="hint">or click to choose one</span></label>
+      <div class="field"><label for="jsonIn">Or paste JSON</label><textarea id="jsonIn" rows="10" spellcheck="false" class="code">${uploadDraft?esc(uploadDraft.raw):""}</textarea></div>
+      <button class="btn primary" id="valBtn">Check module</button>
+      <div id="valOut" aria-live="polite"></div></div>
+    <aside class="card ref-card"><h2>Field types</h2><dl>${Object.entries(FIELD_TYPES).map(([k,v])=>`<dt><code>${k}</code></dt><dd>${esc(v)}</dd>`).join("")}</dl>
+      <h3>Computed columns</h3><dd><code>{"op":"formula","expr":"c1*c2/c3"}</code>, <code>sum</code> or <code>avg</code> with <code>cols</code>, or <code>lookup</code> with <code>cols</code> and a <code>map</code> like <code>{"High|Unknown":"Test first"}</code>.</dd>
+      <h3>Footers</h3><dd><code>{"col":1,"label":"Total","suffix":"%","target":100}</code></dd></aside></div>`;
+  tplDl.onclick = () => download("module-template.json", JSON.stringify(SAMPLE_SPEC, null, 2), "application/json");
+  tplLoad.onclick = () => { jsonIn.value = JSON.stringify(SAMPLE_SPEC, null, 2); check(); };
+  const readFile = file => { if (!file) return; if (file.size > 400000){ valOut.innerHTML = `<p class="err">That file is ${Math.round(file.size/1024)} KB. The limit is 200 KB.</p>`; return; }
+    file.text().then(t => { jsonIn.value = t; check(); }); };
+  fileIn.onchange = e => readFile(e.target.files[0]);
+  drop.addEventListener("dragover", e => { e.preventDefault(); drop.classList.add("over"); });
+  drop.addEventListener("dragleave", () => drop.classList.remove("over"));
+  drop.addEventListener("drop", e => { e.preventDefault(); drop.classList.remove("over"); readFile(e.dataTransfer.files[0]); });
+  valBtn.onclick = check;
+  if (uploadDraft) check();
+  function check(){
+    const raw = jsonIn.value.trim(); let spec;
+    if (!raw){ valOut.innerHTML = `<p class="err">Paste JSON or choose a file first.</p>`; return; }
+    try { spec = JSON.parse(raw); } catch(e){ valOut.innerHTML = `<p class="err">This isn’t valid JSON: ${esc(e.message)}</p>`; return; }
+    const v = validateSpec(spec, raw); uploadDraft = {raw, spec};
+    track("module_uploaded", {module_id: typeof spec.id === "string" ? spec.id : null, valid: !v.errors.length, error_count: v.errors.length});
+    const exists = spec.id && ADMIN.catalog[spec.id];
+    valOut.innerHTML = v.errors.length
+      ? `<div class="val bad"><b>${v.errors.length} problem${v.errors.length>1?"s":""} to fix</b><ul>${v.errors.map(e=>`<li>${esc(e)}</li>`).join("")}</ul></div>`
+      : `<div class="val good"><b>Ready to add: ${esc(spec.title)}</b><p>${spec.groups.length} group${spec.groups.length>1?"s":""}, ${v.toolCount} tool${v.toolCount>1?"s":""}, ${spec.glossary?.length||0} key terms, ${spec.steps?.length||0} guidance steps.</p>
+        ${v.warnings.length?`<ul class="warn">${v.warnings.map(w=>`<li>${esc(w)}</li>`).join("")}</ul>`:""}
+        ${exists?`<p class="proto">A module with id “${esc(spec.id)}” already exists. Saving replaces it; learners keep answers for tools whose ids stay the same.</p>`:""}
+        <div class="actions"><button class="btn ghost" id="saveDraft">Save as draft</button><button class="btn primary" id="savePub">Save and publish</button></div></div>`;
+    if (!v.errors.length){
+      const save = async status => { ADMIN.catalog[spec.id] = {spec, status, updatedAt:new Date().toISOString(), uploadedBy: remote.uid || "local"};
+        await saveCatalogEntry(spec.id); rebuildCatalog(); uploadDraft = null; if (status === "published") track("module_published", {module_id:spec.id}); toast(status==="published"?`${spec.title} published`:`${spec.title} saved as draft`); go("#admin/modules"); };
+      saveDraft.onclick = () => save("draft"); savePub.onclick = () => save("published");
+    }
+  }
+}
+function adminInvite(box){
+  const url = location.origin + location.pathname;
+  box.innerHTML = `<div class="card"><h2>Invite learners</h2><p>Sign-in is open: anyone with the portal link can enter their email and receive a one-time sign-in link, which also creates their account.</p>
+    <div class="field"><label for="portalUrl">Portal link</label><input type="text" id="portalUrl" value="${esc(url)}" readonly></div>
+    <div class="actions"><button class="btn primary" id="copyPortal">Copy portal link</button></div></div>`;
+  copyPortal.onclick = async () => { try { await navigator.clipboard.writeText(url); toast("Copied"); } catch(e){ toast("Copy isn’t available here. Select the link text instead."); } };
+}
+async function adminLearners(box){
+  box.innerHTML = `<div class="card"><h2>Learner progress</h2><p class="hint">Loading…</p></div>`;
+  let rows = [];
+  if (runtime === "claude" && remote.db){
+    try { const snap = await remote.db.collection("progress").get(); rows = snap.docs.filter(d=>d.exists).map(d => ({id:d.id, ...d.data()})); } catch(e){}
+    try { const ps = await remote.user.profiles(rows.map(r=>r.id)); rows.forEach(r => r.name = r.name || ps[r.id]?.name || ""); } catch(e){}
+  } else rows = [{id:"you", name:S.profile?.name, ...progressSummary()}];
+  rows.sort((a,b) => (b.lastActive||"").localeCompare(a.lastActive||""));
+  const mods = ALL_MODULES.filter(m => rows.some(r => r.modules?.[m.id]));
+  box.innerHTML = `<div class="card"><div class="row-between"><h2>Learner progress</h2><span class="hint">${rows.length} learner${rows.length===1?"":"s"}</span></div>
+    ${rows.length ? `<div class="tbl-wrap"><table class="btable"><thead><tr><th>Learner</th><th>Last active</th>${mods.map(m=>`<th title="${esc(m.title)}">${m.icon} ${esc(m.title.split(" ").slice(0,2).join(" "))}</th>`).join("")}</tr></thead><tbody>
+      ${rows.map(r=>`<tr><td><b>${esc(r.name || "Learner")}</b></td><td>${fmtTime(r.lastActive)}</td>${mods.map(m=>{const p=r.modules?.[m.id]; return `<td>${p?`<span class="pct"><i style="width:${p.pct}%;background:${m.color}"></i></span> ${p.pct}%`:"–"}</td>`;}).join("")}</tr>`).join("")}</tbody></table></div>`
+      : `<p>No learners have started yet. Send invitations from the Invite learners tab.</p>`}
+    <p class="hint">Admins see progress percentages only. Learners’ answers stay private to each learner.${runtime==="local"?" In prototype mode only your own row shows.":""}</p></div>`;
+}
+function progressSummary(){
+  const modules = {};
+  Object.keys(S.enrolled).forEach(mid => { const m = MOD(mid); if (m){ const p = modProgress(m); modules[mid] = {pct:p.pct, done:p.done, total:p.total}; } });
+  return {modules, lastActive: S.log[0]?.t || S.savedAt || null};
+}
+/* ===================== STATE & STORAGE ===================== */
+const LS = "learning-lab-portal-v1";
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const has = v => v !== undefined && v !== null && String(v).trim() !== "";
+const fmtTime = iso => iso ? new Date(iso).toLocaleString(undefined,{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}) : "";
+const MOD = id => ALL_MODULES.find(m => m.id === id);
+
+const freshState = () => ({session:null, profile:null, enrolled:{}, log:[], answers:{}, updated:{}, savedAt:null});
+let S = freshState();
+try { const cur = localStorage.getItem(LS + "::current"), r = localStorage.getItem(cur ? LS + "::" + cur : LS); if (r) S = Object.assign(S, JSON.parse(r)); } catch(e){}
+let remote = {db:null, uid:null, user:null, status:"local"};
+/* each email gets its own local workspace in this browser */
+function switchLocalUser(email){
+  if (S.session?.email === email) return;
+  let stored = null; try { stored = localStorage.getItem(LS + "::" + email); } catch(e){}
+  if (stored) S = Object.assign(freshState(), JSON.parse(stored));
+  else if (S.session) S = freshState();          /* a different person was signed in: start clean */
+  else { try { localStorage.removeItem(LS); } catch(e){} } /* adopt any pre-sign-in data once */
+  try { localStorage.setItem(LS + "::current", email); } catch(e){}
+}
+
+const A = (mid, tid) => ((S.answers[mid] ||= {})[tid] ||= {});
+function saveLocal(){ S.savedAt = new Date().toISOString(); try { localStorage.setItem(S.session ? LS + "::" + S.session.email : LS, JSON.stringify(S)); } catch(e){} }
+
+/* one write at a time per doc, coalesced */
+const pending = {}, busy = {};
+function queueWrite(docName, payloadFn){
+  pending[docName] = payloadFn;
+  if (busy[docName]) return;
+  busy[docName] = true;
+  setTimeout(async function run(){
+    const fn = pending[docName]; delete pending[docName];
+    if (fn && remote.db && remote.uid){
+      try { await remote.db.doc(docName === "progress" ? "progress/" + remote.uid : "users/" + remote.uid + "/data/" + docName).set(fn()); setStatus("synced"); }
+      catch(e){ setStatus("error"); }
+    }
+    if (pending[docName]) setTimeout(run, 600); else busy[docName] = false;
+  }, 800);
+}
+function persistProfile(){ saveLocal(); queueWrite("profile", () => ({session:S.session, profile:S.profile, enrolled:S.enrolled, log:S.log.slice(0,60), savedAt:S.savedAt}));
+  if (S.profile) queueWrite("progress", () => ({...progressSummary(), workbooks:Object.keys(S.enrolled).length, name:S.profile.name})); }
+function persistModule(mid){ saveLocal(); queueWrite("m-" + mid, () => ({answers:S.answers[mid]||{}, updated:S.updated[mid]||{}, savedAt:S.savedAt})); }
+
+function setStatus(s){
+  remote.status = s;
+  const el = document.getElementById("syncStatus"); if (!el) return;
+  el.textContent = s==="synced" ? "Saved to your account" : s==="error" ? "Couldn’t sync, saved in this browser" : s==="loading" ? "Connecting…" : "Saved in this browser";
+  el.dataset.state = s;
+}
+
+function localMode(){ runtime = "local"; isAdmin = demoAdmin(); setStatus("local"); route(); }
+async function connect(){
+  if (!window.FB) return localMode();
+  setStatus("loading");
+  try {
+    const user = await FB.ready;
+    if (!user){ S.session = null; runtime = "claude"; isAdmin = false; remote.db = null; setStatus("local"); route(); return; }
+    const uid = await FB.user.id();
+    remote.db = FB.db; remote.uid = uid; remote.user = FB.user; runtime = "claude";
+    try { isAdmin = await FB.user.canEdit(); } catch(e){ isAdmin = false; }
+    if (S.session?.email !== user.email){ switchLocalUser(user.email); S.session = {email:user.email, method:"magic-link", role:isAdmin?"admin":"learner", signedInAt:new Date().toISOString()}; if (S.profile) S.profile.email = user.email; saveLocal(); }
+    const db = remote.db;
+    try { posthog.identify(uid); } catch(e){}
+    if (!sessionStorage.getItem("ll-ph-signin")){ try { sessionStorage.setItem("ll-ph-signin","1"); } catch(e){} track("signin_completed", {method:"signin"}); }
+    await loadShared();
+    const col = db.collection("users/" + uid + "/data");
+    const p = await col.doc("profile").get();
+    if (p.exists){
+      const d = p.data();
+      if (!S.savedAt || (d.savedAt && d.savedAt > S.savedAt)){
+        S.profile = d.profile || S.profile; S.enrolled = d.enrolled || {}; S.log = d.log || [];
+        for (const mid of Object.keys(S.enrolled)){
+          const m = await col.doc("m-" + mid).get();
+          if (m.exists){ S.answers[mid] = m.data().answers || {}; S.updated[mid] = m.data().updated || {}; }
+        }
+        S.savedAt = d.savedAt; try { localStorage.setItem(LS, JSON.stringify(S)); } catch(e){}
+        route();
+      }
+    } else if (S.profile){
+      persistProfile(); Object.keys(S.enrolled).forEach(persistModule);
+    }
+    setStatus("synced"); route();
+  } catch(e){ localMode(); }
+}
+let suggestedName = "";
+
+/* ===================== PROGRESS ===================== */
+const counted = t => t.fields.filter(f => f.type !== "preview");
+function fieldFilled(f, v){
+  switch(f.type){
+    case "checklist": return v && ((v.checked||[]).length || (v.custom||[]).some(has));
+    case "table": return Array.isArray(v) && v.some(r => r && r.some(has));
+    case "list": return Array.isArray(v) && v.some(has);
+    case "ratelist": case "sliders": case "score": case "ab": return v && Object.keys(v).length > 0;
+    case "roi": return v && (has(v.gain)||has(v.primary));
+    default: return has(v);
+  }
+}
+function toolStatus(mid, t){
+  const a = A(mid, t.id), fs = counted(t), n = fs.filter(f => fieldFilled(f, a[f.k])).length;
+  return n === 0 ? "" : n === fs.length ? "done" : "part";
+}
+function modProgress(m){
+  const st = m.tools.map(t => toolStatus(m.id, t));
+  const done = st.filter(s=>s==="done").length, started = st.filter(Boolean).length;
+  const pct = Math.round((st.reduce((a,s)=>a+(s==="done"?1:s==="part"?.5:0),0) / m.tools.length) * 100);
+  return {done, started, total:m.tools.length, pct};
+}
+
+/* ===================== FIELD RENDERING ===================== */
+const flat = f => f.sections ? f.sections.flatMap(x=>x.items) : f.items;
+const colsOf = f => f.cols.map(c => typeof c === "string" ? {name:c} : c);
+function scoreOf(f, v){
+  v = v || {}; const N = flat(f).length, vals = Object.values(v).map(Number), n = vals.length, total = vals.reduce((a,b)=>a+b,0);
+  const metric = f.mode==="avg" ? (n?total/n:0) : total, complete = n===N;
+  const band = complete && f.bands ? f.bands.find(b=>metric>=b[0]) : null;
+  const disp = !n ? "–" : f.mode==="avg" ? `${metric.toFixed(1)}/${f.max}` : `${total}/${N*f.max}`;
+  return {N,n,total,complete,band,disp,low:f.flagBelow && vals.some(x=>x<f.flagBelow)};
+}
+function scoreHtml(f, v){
+  const s = scoreOf(f,v);
+  return `<b>${s.disp}</b><div><strong>${s.complete?(s.band?.[1]||"Complete"):`${s.n} of ${s.N} answered`}</strong>${s.band?`<br><span class="hint">${esc(s.band[2])}</span>`:""}${s.low?`<br><span class="hint">At least one answer is below ${f.flagBelow}: a signal to reignite.</span>`:""}</div>`;
+}
+const emsLabel = b => b>=8 ? "Strongly experimental" : b>=5 ? "Leaning experimental" : b>=3 ? "Leaning certainty-seeking" : "Strongly certainty-seeking";
+function abHtml(v){ const b = Object.values(v||{}).filter(x=>x==="B").length, n = Object.keys(v||{}).length;
+  return `<b>${b}/10</b><div><strong>${n<10?`${n} of 10 answered`:emsLabel(b)}</strong><br><span class="hint">Higher scores mean a more experimental mindset.</span></div>`; }
+function roiCalc(v){ const g=num(v?.gain), p=num(v?.primary)||0, i=num(v?.indirect)||0, c=p+i; if (!Number.isFinite(g) || !(c>0)) return null; return {g,p,i,c,roi:(g-c)/c*100}; }
+const fmtN = n => n.toLocaleString(undefined,{maximumFractionDigits:0});
+function roiHtml(v){ const r = roiCalc(v);
+  return r ? `<b>${r.roi.toFixed(0)}%</b><div><strong>Return on investment</strong><br><span class="hint">${fmtN(r.g)} gain against ${fmtN(r.c)} total cost</span></div>`
+           : `<b>–</b><div><strong>Enter a gain and at least one cost</strong><br><span class="hint">Numbers only, same currency</span></div>`; }
+
+function renderField(mid, t, f){
+  const a = A(mid, t.id), v = a[f.k], id = `${t.id}-${f.k}`;
+  const lab = f.label ? `${esc(f.label)}${f.hint?`<span class="hint">${esc(f.hint)}</span>`:""}` : "";
+  switch(f.type){
+    case "text": return `<div class="field"><label for="${id}">${lab}</label><input type="text" id="${id}" data-k="${f.k}" value="${esc(v)}"></div>`;
+    case "textarea": return `<div class="field"><label for="${id}">${lab}</label><textarea id="${id}" data-k="${f.k}" rows="3">${esc(v)}</textarea></div>`;
+    case "preview": return `<div class="field"><span class="lbl">Your statement</span><p class="statement" id="pv-${id}">${esc(f.render(a))}</p></div>`;
+    case "checklist": { const val = v || {checked:[],custom:[]};
+      return `<div class="field">${lab?`<span class="lbl">${lab}</span>`:""}<div class="checks">${f.options.map((o,i)=>`<label class="chk"><input type="checkbox" data-k="${f.k}" data-check="${i}" ${val.checked?.includes(o)?"checked":""}>${esc(o)}</label>`).join("")}</div>
+      ${f.custom?`<div class="customs">${Array.from({length:f.custom},(_,i)=>`<input type="text" aria-label="Your own item ${i+1}" placeholder="Add your own…" data-k="${f.k}" data-custom="${i}" value="${esc(val.custom?.[i])}">`).join("")}</div>`:""}</div>`; }
+    case "table": { const rows = v || [], cols = colsOf(f);
+      return `<div class="field">${lab?`<span class="lbl">${lab}</span>`:""}<div class="tbl-wrap"><table class="grid"><thead><tr>${f.rowLabels?"<th></th>":""}${cols.map(c=>`<th scope="col">${esc(c.name)}</th>`).join("")}${f.compute?`<th scope="col">${esc(f.computeLabel)}</th>`:""}</tr></thead><tbody>
+      ${Array.from({length:f.rows},(_,r)=>`<tr>${f.rowLabels?`<td class="rowlab">${esc(f.rowLabels[r])}</td>`:""}${cols.map((c,ci)=>{
+        const al = esc((f.rowLabels?.[r]||"Row "+(r+1))+" — "+c.name), cv = rows[r]?.[ci];
+        return c.opts ? `<td><select aria-label="${al}" data-k="${f.k}" data-r="${r}" data-c="${ci}"><option value=""></option>${c.opts.map(o=>`<option ${cv===o?"selected":""}>${esc(o)}</option>`).join("")}</select></td>`
+                      : `<td><input type="text" ${c.num?'inputmode="decimal" class="numin"':""} aria-label="${al}" data-k="${f.k}" data-r="${r}" data-c="${ci}" value="${esc(cv)}"></td>`;
+      }).join("")}${f.compute?`<td class="comp" data-comp="${f.k}-${r}">${esc(f.compute(rows[r]||[]))}</td>`:""}</tr>`).join("")}
+      </tbody></table></div>${f.footer?`<p class="foot" id="foot-${id}">${esc(f.footer(rows))}</p>`:""}</div>`; }
+    case "list": { const arr = v || [];
+      return `<div class="field"><span class="lbl">${lab}</span>${Array.from({length:f.count},(_,i)=>`<input type="text" class="listin" aria-label="${esc(f.label)} ${i+1}" placeholder="${f.numbered?(i+1)+".":esc(f.prefix||"")}" data-k="${f.k}" data-i="${i}" value="${esc(arr[i])}">`).join("")}</div>`; }
+    case "choice": return `<div class="field"><span class="lbl">${lab}</span><div class="seg" role="radiogroup" aria-label="${esc(f.label)}">${f.options.map(o=>`<label><input type="radio" name="${id}" data-k="${f.k}" value="${esc(o)}" ${v===o?"checked":""}>${esc(o)}</label>`).join("")}</div></div>`;
+    case "ratelist": { const val = v || {};
+      return `<div class="field">${lab?`<span class="lbl">${lab}</span>`:""}${f.items.map((it,i)=>`<div class="rate-row"><span>${esc(it)}</span><div class="seg" role="radiogroup" aria-label="${esc(it)}">${f.options.map(o=>`<label><input type="radio" name="${id}-${i}" data-k="${f.k}" data-i="${i}" value="${esc(o)}" ${val[i]===o?"checked":""}>${esc(o)}</label>`).join("")}</div></div>`).join("")}</div>`; }
+    case "score": { const val = v || {}; let idx = 0; const secs = f.sections || [{name:null, items:f.items}];
+      return `<div class="field">${secs.map(sc=>`${sc.name?`<h3 class="sec">${esc(sc.name)}</h3>`:""}${sc.items.map(it=>{const i=idx++; return `<div class="rate-row"><span>${esc(it)}</span><div class="seg" role="radiogroup" aria-label="${esc(it)}">${Array.from({length:f.max},(_,n)=>n+1).map(n=>`<label><input type="radio" name="${id}-${i}" data-k="${f.k}" data-i="${i}" value="${n}" ${String(val[i])===String(n)?"checked":""}>${n}</label>`).join("")}</div></div>`;}).join("")}`).join("")}<div class="score" id="out-${id}">${scoreHtml(f,val)}</div></div>`; }
+    case "ab": { const val = v || {};
+      return `<div class="field">${f.pairs.map((p,i)=>`<div class="ab" role="radiogroup" aria-label="Statement pair ${i+1}"><div class="n">${i+1}</div>
+        <label class="a"><input type="radio" name="${id}-${i}" data-k="${f.k}" data-i="${i}" value="A" ${val[i]==="A"?"checked":""}>${esc(p[0])}</label>
+        <label><input type="radio" name="${id}-${i}" data-k="${f.k}" data-i="${i}" value="B" ${val[i]==="B"?"checked":""}>${esc(p[1])}</label></div>`).join("")}
+        <div class="score" id="out-${id}">${abHtml(val)}</div></div>`; }
+    case "sliders": { const val = v || {};
+      return `<div class="field">${f.items.map((it,i)=>`<div class="range-row"><span>${esc(it)}</span><input type="range" min="1" max="10" step="1" aria-label="${esc(it)}" data-k="${f.k}" data-i="${i}" value="${val[i]??5}"><output>${val[i]??"–"}</output></div>`).join("")}</div>`; }
+    case "roi": { const val = v || {};
+      const inp = (s,l,h) => `<div class="field"><label for="${id}-${s}">${l}<span class="hint">${h}</span></label><input type="text" inputmode="decimal" id="${id}-${s}" data-k="${f.k}" data-sub="${s}" value="${esc(val[s])}"></div>`;
+      return inp("gain","Investment gain","Money you’ll generate or save, plus time saved, per year") + inp("primary","Primary costs","Licensing, services, integration fees") + inp("indirect","Indirect costs","Implementation and training") + `<div class="score" id="out-${id}">${roiHtml(val)}</div>`; }
+  }
+}
+
+function onInput(e){
+  const el = e.target, sheet = el.closest("[data-tool]"); if (!sheet || !el.dataset.k) return;
+  const mid = sheet.dataset.mid, tid = sheet.dataset.tool, m = MOD(mid), t = m.tools.find(x=>x.id===tid), f = t.fields.find(x=>x.k===el.dataset.k), a = A(mid, tid);
+  const out = document.getElementById(`out-${tid}-${f.k}`);
+  switch(f.type){
+    case "checklist": { const v = a[f.k] ||= {checked:[],custom:[]}; v.checked ||= []; v.custom ||= [];
+      if (el.dataset.check !== undefined){ const o = f.options[+el.dataset.check]; v.checked = el.checked ? [...new Set([...v.checked,o])] : v.checked.filter(x=>x!==o); }
+      else v.custom[+el.dataset.custom] = el.value; break; }
+    case "table": { const v = a[f.k] ||= []; const r = +el.dataset.r; (v[r] ||= [])[+el.dataset.c] = el.value;
+      if (f.compute){ const c = sheet.querySelector(`[data-comp="${f.k}-${r}"]`); if (c) c.textContent = f.compute(v[r]); }
+      if (f.footer){ const ft = document.getElementById(`foot-${tid}-${f.k}`); if (ft) ft.textContent = f.footer(v); } break; }
+    case "list": (a[f.k] ||= [])[+el.dataset.i] = el.value; break;
+    case "ratelist": (a[f.k] ||= {})[el.dataset.i] = el.value; break;
+    case "score": (a[f.k] ||= {})[el.dataset.i] = +el.value; if (out) out.innerHTML = scoreHtml(f, a[f.k]); break;
+    case "ab": (a[f.k] ||= {})[el.dataset.i] = el.value; if (out) out.innerHTML = abHtml(a[f.k]); break;
+    case "sliders": (a[f.k] ||= {})[el.dataset.i] = +el.value; el.nextElementSibling.textContent = el.value; break;
+    case "roi": (a[f.k] ||= {})[el.dataset.sub] = el.value; if (out) out.innerHTML = roiHtml(a[f.k]); break;
+    default: a[f.k] = el.value;
+  }
+  t.fields.filter(x=>x.type==="preview").forEach(p => { const n = document.getElementById(`pv-${tid}-${p.k}`); if (n) n.textContent = p.render(a); });
+  const now = new Date().toISOString();
+  (S.updated[mid] ||= {})[tid] = now;
+  if (S.enrolled[mid]) S.enrolled[mid].last = tid;
+  if (!(S.log[0] && S.log[0].mid===mid && S.log[0].tid===tid)) S.log.unshift({t:now, mid, tid}); else S.log[0].t = now;
+  S.log = S.log.slice(0,60);
+  clearTimeout(onInput.timer);
+  onInput.timer = setTimeout(()=>{ persistModule(mid); persistProfile(); refreshToolChrome(mid, tid); }, 400);
+}
+const seenStatus = {};
+function trackProgress(mid, tid, status, p){
+  if (status && seenStatus[mid+"/"+tid] !== status){ seenStatus[mid+"/"+tid] = status; track("tool_answered", {module_id:mid, tool_id:tid, status: status==="done"?"done":"started"}); }
+  if (p.total && p.done === p.total){ let flag = "ll-completed-" + mid, was = null; try { was = localStorage.getItem(flag); } catch(e){}
+    if (!was){ try { localStorage.setItem(flag,"1"); } catch(e){} track("module_completed", {module_id:mid, days_since_enrolled: S.enrolled[mid] ? Math.floor((Date.now()-Date.parse(S.enrolled[mid].added))/864e5) : null}); } }
+}
+function refreshToolChrome(mid, tid){
+  const s = document.getElementById("savedNote"); if (s) s.textContent = "Saved " + fmtTime(S.updated[mid]?.[tid]);
+  const m = MOD(mid), t = m.tools.find(x=>x.id===tid);
+  const dot = document.querySelector(`[data-go-tool="${tid}"] .dot`); if (dot) dot.className = "dot " + toolStatus(mid, t);
+  const p = modProgress(m), bar = document.getElementById("modBar"), txt = document.getElementById("modPct");
+  if (bar) bar.style.width = p.pct + "%"; if (txt) txt.textContent = `${p.pct}% · ${p.done} of ${p.total} tools complete`;
+  trackProgress(mid, tid, toolStatus(mid, t), p);
+}
+
+/* ===================== ROUTING & VIEWS ===================== */
+const main = () => document.getElementById("main");
+function go(hash){ if (location.hash === hash) route(); else location.hash = hash; }
+window.addEventListener("hashchange", route);
+
+function route(){ try { routeInner(); } catch(err){ console.error(err); main().innerHTML = `<section class="wrap"><div class="card empty-card"><h1>Something went wrong</h1><p>This page couldn’t load. Your answers are saved.</p><button class="btn primary" onclick="location.hash='#dashboard'">Go to my learning</button></div></section>`; } }
+function routeInner(){
+  const raw = location.hash.slice(1);
+  if (raw.startsWith("auth-")) return handleAuth(raw.slice(5));
+  document.body.classList.remove("auth");
+  if (S.session && Date.now() - Date.parse(S.session.signedInAt) > 30 * 864e5){ S.session = null; saveLocal(); }
+  if (!S.session){ if (raw !== "signin") setHash("#signin"); return viewSignin(); }
+  if (raw === "signin") return go(S.profile ? "#dashboard" : "#profile");
+  const h = raw || (S.profile ? "dashboard" : "profile");
+  if (!S.profile && h !== "profile") return go("#profile");
+  const an = document.getElementById("adminNav"); if (an) an.hidden = !isAdmin;
+  const [view, a, b] = h.split("/");
+  document.querySelectorAll("[data-nav]").forEach(n => n.setAttribute("aria-current", n.dataset.nav === view ? "page" : "false"));
+  const av = document.getElementById("avatarBtn"); av.textContent = (S.profile?.name || "?").trim().charAt(0).toUpperCase() || "?";
+  if (view === "profile") viewProfile();
+  else if (view === "catalog") viewCatalog();
+  else if (view === "journey") viewJourney();
+  else if (view === "admin") viewAdmin(a);
+  else if (view === "m" && MOD(a)) viewModule(MOD(a), b);
+  else viewDashboard();
+  window.scrollTo({top:0});
+  track("$pageview", {view, module_id: view === "m" ? a : undefined, tool_id: view === "m" ? b : undefined});
+}
+
+/* ---------- Profile ---------- */
+function viewProfile(){
+  const p = S.profile || {}; const first = !S.profile;
+  main().innerHTML = `<section class="wrap profile">
+    ${first?`<div class="welcome"><p class="eyebrow">Step 1 of 2 · Welcome</p><h1>Set up your learner profile</h1><p class="lead">Tell us a little about yourself. Your profile shapes your dashboard, and your answers in every workbook are saved to your account.</p></div>`:`<h1>My profile</h1>`}
+    <div class="profile-grid">
+      <form class="card form" id="profileForm" onsubmit="return false">
+        <div class="avatar-row"><div class="avatar-lg" id="avPreview">${esc((p.name||suggestedName||"?").charAt(0).toUpperCase())}</div><p class="hint">Your initial is your avatar.</p></div>
+        <div class="field"><label for="pName">Name</label><input type="text" id="pName" value="${esc(p.name || suggestedName)}" required></div>
+        <div class="field two"><div><label for="pRole">Role or title</label><input type="text" id="pRole" value="${esc(p.role)}" placeholder="e.g. Product Manager"></div>
+          <div><label for="pOrg">Company or team</label><input type="text" id="pOrg" value="${esc(p.org)}" placeholder="Optional"></div></div>
+        <div class="field"><label for="pAbout">A little about you</label><textarea id="pAbout" maxlength="200" rows="3" placeholder="What you’re working on or curious about">${esc(p.about)}</textarea><span class="counter" id="pCount">${(p.about||"").length} / 200</span></div>
+        <div class="field"><label for="pGoal">What do you want to get out of these workbooks?</label><textarea id="pGoal" rows="2" placeholder="e.g. lead my new team with more curiosity">${esc(p.goal)}</textarea></div>
+        <div class="field"><span class="lbl">Time you can give each week</span><div class="seg" role="radiogroup" aria-label="Weekly time">${["30 min","1 hour","2 hours","3+ hours"].map(o=>`<label><input type="radio" name="pHours" value="${o}" ${p.hours===o?"checked":""}>${o}</label>`).join("")}</div></div>
+        <div class="actions"><button class="btn primary" id="pSave">${first?"Save and choose my workbooks":"Save profile"}</button><span class="saved" id="pSaved"></span></div>
+      </form>
+      <aside><p class="eyebrow">How your profile appears</p><div class="card preview-card" id="pCard"></div>
+        <p class="hint">Your answers are private to you. Admins see only your progress percentages.</p>
+        <div class="card account"><p class="eyebrow">Account</p><p>Signed in as <b>${esc(S.session.email)}</b><br><span class="hint">via ${S.session.method==="invite"?"invitation link":"magic link"} on ${fmtTime(S.session.signedInAt)}</span></p>
+          <button class="btn ghost" onclick="signOut()">Sign out</button></div></aside>
+    </div></section>`;
+  const card = () => { const raw = pName.value.trim(), n = raw || "Your name";
+    pCard.innerHTML = `<div class="avatar-lg">${esc(raw?raw.charAt(0).toUpperCase():"?")}</div><h2>${esc(n)}</h2>${pRole.value?`<span class="pill">${esc(pRole.value)}${pOrg.value?` · ${esc(pOrg.value)}`:""}</span>`:""}<p>${esc(pAbout.value)||'<span class="hint">Your short bio shows here.</span>'}</p><p class="stat">${Object.keys(S.enrolled).length} workbooks in progress</p>`;
+    avPreview.textContent = raw ? raw.charAt(0).toUpperCase() : "?"; pCount.textContent = `${pAbout.value.length} / 200`; };
+  ["pName","pRole","pOrg","pAbout"].forEach(i => document.getElementById(i).addEventListener("input", card)); card();
+  pSave.onclick = () => {
+    if (!pName.value.trim()){ pName.focus(); toast("Add your name to continue"); return; }
+    S.profile = {email:S.session.email, name:pName.value.trim(), role:pRole.value.trim(), org:pOrg.value.trim(), about:pAbout.value.trim(), goal:pGoal.value.trim(), hours:(document.querySelector('input[name="pHours"]:checked')||{}).value||""};
+    track("profile_saved", {first_time:first, fields_filled_count:[S.profile.name,S.profile.role,S.profile.org,S.profile.about,S.profile.goal,S.profile.hours].filter(Boolean).length});
+    persistProfile(); toast("Profile saved");
+    if (first) go("#catalog"); else { pSaved.textContent = "Saved"; route(); }
+  };
+}
+
+/* ---------- Catalog ---------- */
+function viewCatalog(){
+  const first = !Object.keys(S.enrolled).length;
+  main().innerHTML = `<section class="wrap">
+    ${first?`<p class="eyebrow">Step 2 of 2 · Choose your workbooks</p>`:""}<h1>Study modules</h1>
+    <p class="lead">Add the workbooks you want to work on. Each one comes with guidance on how to proceed, key terms, and a brief that compiles your answers.</p>
+    <div class="cat-grid">${MODULES.map(m => { const on = !!S.enrolled[m.id], p = modProgress(m);
+      return `<article class="card mod-card" style="--mc:${m.color}"><div class="mod-top"><span class="mod-icon" aria-hidden="true">${m.icon}</span><span class="provider">${esc(m.provider)}</span></div>
+      <h2>${esc(m.title)}</h2><p>${esc(m.blurb)}</p><p class="meta-line">${esc(m.time)} · ${m.tools.length} tools</p>
+      ${on?`<div class="bar sm"><span style="width:${p.pct}%"></span></div><p class="meta-line">${p.pct}% complete</p>`:""}
+      <div class="actions">${on?`<button class="btn primary" data-open="${m.id}">Continue</button>`:`<button class="btn primary" data-add="${m.id}">Add to my learning</button><button class="btn ghost" data-open="${m.id}">Preview</button>`}</div></article>`; }).join("")}</div></section>`;
+  main().querySelectorAll("[data-add]").forEach(b => b.onclick = () => enroll(b.dataset.add, true));
+  main().querySelectorAll("[data-open]").forEach(b => b.onclick = () => go("#m/" + b.dataset.open));
+}
+function enroll(mid, open){
+  if (!S.enrolled[mid]) track("module_enrolled", {module_id:mid, source: open ? "catalog" : "preview"});
+  if (!S.enrolled[mid]) S.enrolled[mid] = {added:new Date().toISOString(), last:null};
+  S.log.unshift({t:new Date().toISOString(), mid, tid:"__added"}); persistProfile(); toast(`${MOD(mid).title} added to your learning`);
+  if (open) go("#m/" + mid); else route();
+}
+
+/* ---------- Dashboard ---------- */
+function viewDashboard(){
+  const mine = ALL_MODULES.filter(m => S.enrolled[m.id]);
+  const totals = mine.reduce((a,m)=>{const p=modProgress(m); a.done+=p.done; a.total+=p.total; return a;},{done:0,total:0});
+  const last = S.log.find(l => l.tid !== "__added" && MOD(l.mid));
+  const lm = last && MOD(last.mid), lt = lm && lm.tools.find(t=>t.id===last.tid);
+  main().innerHTML = `<section class="wrap">
+    <p class="eyebrow">My learning</p><h1>Hi ${esc(S.profile.name.split(" ")[0])}</h1>
+    ${S.profile.goal?`<p class="lead">Your goal: ${esc(S.profile.goal)}</p>`:""}
+    <div class="stats"><div class="card stat-card"><b>${mine.length}</b><span>workbooks in progress</span></div>
+      <div class="card stat-card"><b>${totals.done}<small>/${totals.total||0}</small></b><span>tools completed</span></div>
+      <div class="card stat-card"><b>${S.log.filter(l=>l.tid!=="__added").length}</b><span>answers logged</span></div></div>
+    ${lt?`<div class="card continue" style="--mc:${lm.color}"><div><p class="eyebrow">Continue where you left off</p><h2>${esc(lt.title)}</h2><p class="hint">${esc(lm.title)} · last saved ${fmtTime(last.t)}</p></div><button class="btn primary" onclick="go('#m/${lm.id}/${lt.id}')">Continue</button></div>`:""}
+    <h2 class="h2">My workbooks</h2>
+    ${mine.length?`<div class="cat-grid">${mine.map(m=>{const p=modProgress(m), nextT = m.tools.find(t=>toolStatus(m.id,t)!=="done");
+      return `<article class="card mod-card" style="--mc:${m.color}"><div class="mod-top"><span class="mod-icon" aria-hidden="true">${m.icon}</span><span class="provider">${esc(m.provider)}</span></div><h2>${esc(m.title)}</h2>
+      <div class="bar sm"><span style="width:${p.pct}%"></span></div><p class="meta-line">${p.pct}% · ${p.done} of ${p.total} tools complete</p>
+      ${nextT?`<p class="hint">Next up: ${esc(nextT.title)}</p>`:`<p class="hint">All tools complete. Your brief is ready.</p>`}
+      <div class="actions"><button class="btn primary" onclick="go('#m/${m.id}${nextT?"/"+nextT.id:""}')">${p.started?"Continue":"Start"}</button><button class="btn ghost" onclick="go('#m/${m.id}/brief')">Brief</button></div></article>`;}).join("")}</div>`
+      :`<div class="card empty-card"><p>You haven’t added any workbooks yet.</p><button class="btn primary" onclick="go('#catalog')">Browse study modules</button></div>`}
+    <h2 class="h2">Recent activity</h2>${activityList(8)}</section>`;
+}
+function activityList(n){
+  const items = S.log.filter(l=>MOD(l.mid)).slice(0,n);
+  if (!items.length) return `<p class="hint">Your saved answers will be logged here.</p>`;
+  return `<ul class="activity">${items.map(l=>{const m=MOD(l.mid), t=m.tools.find(x=>x.id===l.tid);
+    return `<li><span class="dot-c" style="background:${m.color}"></span><span>${l.tid==="__added"?`Added <b>${esc(m.title)}</b>`:`Answered <a href="#m/${m.id}/${l.tid}">${esc(t?.title||l.tid)}</a> <span class="hint">in ${esc(m.title)}</span>`}</span><time>${fmtTime(l.t)}</time></li>`;}).join("")}</ul>`;
+}
+
+/* ---------- Journey ---------- */
+function viewJourney(){
+  const mine = ALL_MODULES.filter(m => S.enrolled[m.id]);
+  main().innerHTML = `<section class="wrap"><p class="eyebrow">My journey</p><h1>Progress across workbooks</h1>
+    <div class="actions" style="margin:0 0 20px"><button class="btn primary" id="allMd">Download all briefs (.md)</button><button class="btn ghost" id="backup">Back up my answers</button></div>
+    ${mine.length?mine.map(m=>{const p=modProgress(m);
+      return `<div class="card journey-row" style="--mc:${m.color}"><div class="jr-head"><span class="mod-icon">${m.icon}</span><div><h2>${esc(m.title)}</h2><p class="hint">Added ${fmtTime(S.enrolled[m.id].added)}</p></div><b>${p.pct}%</b></div>
+      <div class="tool-dots">${m.tools.map(t=>`<a href="#m/${m.id}/${t.id}" title="${esc(t.title)}" class="tdot ${toolStatus(m.id,t)}"></a>`).join("")}</div>
+      <div class="actions"><button class="btn ghost" onclick="go('#m/${m.id}/brief')">Open brief</button><button class="btn ghost danger" data-drop="${m.id}">Remove from my learning</button></div></div>`;}).join("")
+      :`<div class="card empty-card"><p>Add a workbook to start your journey.</p><button class="btn primary" onclick="go('#catalog')">Browse study modules</button></div>`}
+    <h2 class="h2">Activity log</h2>${activityList(40)}</section>`;
+  allMd.onclick = () => { mine.forEach(m => track("brief_exported", {module_id:m.id, format:"md"})); download("my-learning-briefs.md", mine.map(toMarkdown).join("\n\n---\n\n") || "# No briefs yet", "text/markdown"); };
+  backup.onclick = () => download("learning-lab-backup.json", JSON.stringify(S,null,2), "application/json");
+  main().querySelectorAll("[data-drop]").forEach(b => b.onclick = () => {
+    if (!confirm("Remove this workbook from your learning? Your answers are kept and come back if you add it again.")) return;
+    delete S.enrolled[b.dataset.drop]; persistProfile(); route(); });
+}
+
+/* ---------- Module ---------- */
+function viewModule(m, sub){
+  const enrolled = !!S.enrolled[m.id], p = modProgress(m);
+  const tool = sub && sub !== "brief" ? m.tools.find(t=>t.id===sub) : null;
+  main().innerHTML = `<div class="mod-banner" style="--mc:${m.color}"><div class="wrap">
+      <a href="#dashboard" class="crumb">← My learning</a>
+      <div class="mb-row"><span class="mod-icon xl" aria-hidden="true">${m.icon}</span><div><p class="provider">${esc(m.provider)}</p><h1>${esc(m.title)}</h1></div></div>
+      <div class="bar"><span id="modBar" style="width:${p.pct}%"></span></div><p class="meta-line" id="modPct">${p.pct}% · ${p.done} of ${p.total} tools complete</p>
+      ${enrolled?"":`<div class="card notice"><span>You’re previewing this workbook. Add it to save your answers.</span><button class="btn primary" id="enrollBtn">Add to my learning</button></div>`}
+    </div></div>
+    <div class="wrap mod-layout">
+      <nav class="mod-nav" aria-label="${esc(m.title)} tools">
+        <a href="#m/${m.id}" class="mn-link ${!sub?"on":""}">Overview & how to proceed</a>
+        ${m.groups.map(g=>`<p class="mn-group">${esc(g.name)}</p>${g.tools.map(t=>`<a href="#m/${m.id}/${t.id}" data-go-tool="${t.id}" class="mn-link ${sub===t.id?"on":""}"><span class="dot ${toolStatus(m.id,t)}"></span>${esc(t.title)}</a>`).join("")}`).join("")}
+        <a href="#m/${m.id}/brief" class="mn-link brief ${sub==="brief"?"on":""}">My brief</a>
+      </nav>
+      <div class="mod-main" id="modMain"></div>
+    </div>`;
+  if (!enrolled) enrollBtn.onclick = () => enroll(m.id, false);
+  const box = document.getElementById("modMain");
+  if (sub === "brief") box.innerHTML = briefHtml(m), wireBrief(m);
+  else if (tool) renderTool(m, tool, box);
+  else box.innerHTML = overviewHtml(m);
+}
+function glossaryHtml(m, open){
+  return `<details class="card glossary" ${open?"open":""}><summary>Key terms (${m.glossary.length})</summary><dl>${m.glossary.map(([t,d])=>`<dt>${esc(t)}</dt><dd>${esc(d)}</dd>`).join("")}</dl></details>`;
+}
+function overviewHtml(m){
+  const first = m.tools.find(t=>toolStatus(m.id,t)!=="done") || m.tools[0];
+  return `<div class="card"><p class="eyebrow">About this workbook</p><p class="lead">${esc(m.blurb)}</p><p class="meta-line">${esc(m.time)}</p></div>
+    <div class="card"><h2>How to proceed</h2><ol class="steps">${m.steps.map(([h,d])=>`<li><b>${esc(h)}</b><span>${esc(d)}</span></li>`).join("")}</ol>
+    <div class="howto"><p><b>Tracking your progress.</b> Each tool’s dot fills as you answer: half for started, full when every field has an answer. Answers save automatically and every save is logged on your dashboard.</p>
+    <p><b>Your brief.</b> Everything you write is compiled into a brief you can copy, download or print at any time.</p></div>
+    <button class="btn primary" onclick="go('#m/${m.id}/${first.id}')">${modProgress(m).started?"Continue with":"Start with"}: ${esc(first.title)}</button></div>
+    ${glossaryHtml(m, true)}`;
+}
+function renderTool(m, t, box){
+  const i = m.tools.indexOf(t), enrolled = !!S.enrolled[m.id];
+  box.innerHTML = `<article class="card sheet" data-tool="${t.id}" data-mid="${m.id}">
+    <div class="meta"><span>${esc(t.group)} · ${i+1} of ${m.tools.length}</span><span><span class="saved" id="savedNote">${S.updated[m.id]?.[t.id]?"Saved "+fmtTime(S.updated[m.id][t.id]):""}</span> <span class="ref">${esc(t.ref)}</span></span></div>
+    <h2 class="tool-title">${esc(t.title)}</h2><p class="intro">${esc(t.intro)}</p>
+    ${t.tip?`<div class="tip"><b>Guidance</b><p>${esc(t.tip)}</p></div>`:""}
+    <form onsubmit="return false" ${enrolled?"":'class="locked"'}>${t.fields.map(f=>renderField(m.id,t,f)).join("")}</form>
+    <div class="pager"><button class="btn ghost" ${i===0?"disabled":""} onclick="go('#m/${m.id}/${m.tools[i-1]?.id}')">Previous</button>
+      <button class="btn primary" onclick="go('#m/${m.id}/${i===m.tools.length-1?"brief":m.tools[i+1].id}')">${i===m.tools.length-1?"Open my brief":"Next: "+esc(m.tools[i+1].title)}</button></div>
+  </article>${glossaryHtml(m, false)}`;
+  if (!enrolled){
+    box.querySelectorAll("form input, form textarea, form select").forEach(el => el.disabled = true);
+  }
+}
+document.addEventListener("toggle", e => { const d = e.target; if (d.classList?.contains("glossary") && d.open){ const sheet = document.querySelector("[data-mid]"); const m = (location.hash.match(/^#m\/([^/]+)/)||[])[1];
+  track("glossary_opened", {module_id:m, from: sheet ? "tool" : "overview"}); } }, true);
+document.addEventListener("input", e => { if (e.target.closest("[data-tool] form")) onInput(e); });
+document.addEventListener("change", e => { if ((e.target.type==="checkbox"||e.target.type==="radio") && e.target.closest("[data-tool] form")) onInput(e); });
+
+/* ---------- Brief ---------- */
+function briefData(m){
+  return m.groups.map(g => ({name:g.name, tools:g.tools.map(t => {
+    const a = A(m.id, t.id), items = [];
+    for (const f of counted(t)){
+      const v = a[f.k]; if (!fieldFilled(f, v)) continue;
+      switch(f.type){
+        case "checklist": items.push({kind:"list", q:f.label||null, items:[...(v.checked||[]),...(v.custom||[]).filter(has)]}); break;
+        case "table": { const cols = colsOf(f).map(c=>c.name);
+          items.push({kind:"table", q:f.label||null, cols:(f.rowLabels?[""]:[]).concat(cols, f.compute?[f.computeLabel]:[]),
+            rows:v.map((r,i)=> r && r.some(has) ? (f.rowLabels?[f.rowLabels[i]]:[]).concat(cols.map((_,c)=>r[c]||""), f.compute?[f.compute(r)]:[]) : null).filter(Boolean)});
+          if (f.footer && f.footer(v)) items.push({kind:"text", q:null, a:f.footer(v)}); break; }
+        case "list": items.push({kind:"list", q:f.label, items:v.filter(has).map(x=>f.prefix?`${f.prefix} ${x}`:x)}); break;
+        case "ratelist": items.push({kind:"table", q:f.label||null, cols:["","Rating"], rows:f.items.map((it,i)=>v[i]?[it,v[i]]:null).filter(Boolean)}); break;
+        case "sliders": items.push({kind:"bars", max:10, items:f.items.map((it,i)=>[it, v[i]??null]).filter(x=>x[1]!==null)}); break;
+        case "score": { const sc = scoreOf(f,v); items.push({kind:"text", q:"Result", a:`${sc.disp}${sc.complete&&sc.band?` — ${sc.band[1]}. ${sc.band[2]}`:sc.complete?"":` (${sc.n} of ${sc.N} answered)`}`}); break; }
+        case "ab": { const b = Object.values(v).filter(x=>x==="B").length, lean = f.pairs.map((p,i)=>v[i]==="A"?p[0]:null).filter(Boolean);
+          items.push({kind:"text", q:"Experimental Mindset Scale", a:`${b}/10 — ${emsLabel(b)}`}); if (lean.length) items.push({kind:"list", q:"Where I still lean toward certainty", items:lean}); break; }
+        case "roi": { const r = roiCalc(v); items.push({kind:"text", q:"Return on investment", a:r?`${r.roi.toFixed(0)}% — gain ${fmtN(r.g)} against ${fmtN(r.c)} total cost`:"Incomplete"}); break; }
+        default: items.push({kind:"text", q:f.label, a:v});
+      }
+    }
+    return items.length ? {t, items, updated:S.updated[m.id]?.[t.id]} : null;
+  }).filter(Boolean)}));
+}
+function scorecard(m){
+  const rows = [];
+  for (const t of m.tools) for (const f of t.fields){
+    if (f.type==="score"){ const sc = scoreOf(f, A(m.id,t.id)[f.k]); if (sc.n) rows.push([t.title, sc.disp, sc.complete?(sc.band?.[1]||"Complete"):`${sc.n} of ${sc.N} answered`]); }
+    if (f.type==="ab"){ const v = A(m.id,t.id)[f.k]||{}, n = Object.keys(v).length; if (n){ const b = Object.values(v).filter(x=>x==="B").length; rows.push([t.title, `${b}/10`, n<10?`${n} of 10 answered`:emsLabel(b)]); } }
+  }
+  return rows;
+}
+function briefHtml(m){
+  const data = briefData(m), p = modProgress(m), sc = scorecard(m), hl = (m.highlights ? m.highlights(tid=>A(m.id,tid)) : []).filter(x=>has(x[1]));
+  const body = data.map(sec => !sec.tools.length ? "" : `<h3 class="bsec">${esc(sec.name)}</h3>` + sec.tools.map(({t,items,updated}) =>
+    `<h4>${esc(t.title)} <span class="hint">· logged ${fmtTime(updated)}</span></h4>` + items.map(it => {
+      if (it.kind==="text") return `${it.q?`<p class="q">${esc(it.q)}</p>`:""}<p class="a">${esc(it.a)}</p>`;
+      if (it.kind==="list") return `${it.q?`<p class="q">${esc(it.q)}</p>`:""}<ul>${it.items.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`;
+      if (it.kind==="table") return `${it.q?`<p class="q">${esc(it.q)}</p>`:""}<div class="tbl-wrap"><table class="btable"><thead><tr>${it.cols.map(c=>`<th>${esc(c)}</th>`).join("")}</tr></thead><tbody>${it.rows.map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+      if (it.kind==="bars") return `<div class="bars">${it.items.map(([l,n])=>`<div class="bar-row"><span>${esc(l)}</span><i><span style="width:${n/it.max*100}%"></span></i><b>${n}</b></div>`).join("")}</div>`;
+    }).join("")).join("")).join("");
+  return `<article class="card sheet brief"><div class="meta"><span>Compiled from your answers</span><span>${new Date().toLocaleDateString(undefined,{day:"numeric",month:"long",year:"numeric"})}</span></div>
+    <h2 class="tool-title">${esc(m.title)} brief</h2><p class="intro">${esc(S.profile.name)}${S.profile.role?` · ${esc(S.profile.role)}`:""} · ${p.started} of ${p.total} tools contribute to this brief.</p>
+    <div class="actions noprint"><button class="btn primary" id="copyMd">Copy as text</button><button class="btn ghost" id="dlMd">Download .md</button><button class="btn ghost" id="printBrief">Print or save PDF</button></div>
+    ${hl.map(([l,v])=>`<p class="q">${esc(l)}</p><p class="statement">${esc(v)}</p>`).join("")}
+    ${sc.length?`<p class="q">Scorecard</p><div class="tbl-wrap"><table class="btable"><thead><tr><th>Exercise</th><th>Score</th><th>Level</th></tr></thead><tbody>${sc.map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`:""}
+    ${body || `<p class="hint">Nothing logged yet. Start with the first tool and your answers will appear here.</p>`}</article>`;
+}
+function wireBrief(m){
+  copyMd.onclick = async () => { try { await navigator.clipboard.writeText(toMarkdown(m)); track("brief_exported", {module_id:m.id, format:"copy"}); toast("Brief copied"); } catch(e){ toast("Copy isn’t available here. Use Download .md instead."); } };
+  dlMd.onclick = () => { track("brief_exported", {module_id:m.id, format:"md"}); download(`${m.id}-brief.md`, toMarkdown(m), "text/markdown"); };
+  const pr = document.getElementById("printBrief"); if (pr) pr.onclick = () => { track("brief_exported", {module_id:m.id, format:"print"}); window.print(); };
+}
+function toMarkdown(m){
+  const L = [`# ${m.title} — brief`, `_${S.profile?.name||""}${S.profile?.role?`, ${S.profile.role}`:""} · ${new Date().toLocaleDateString()}_`, ""];
+  (m.highlights ? m.highlights(tid=>A(m.id,tid)) : []).filter(x=>has(x[1])).forEach(([l,v])=>L.push(`**${l}:** ${v}`, ""));
+  const sc = scorecard(m); if (sc.length){ L.push("## Scorecard","","| Exercise | Score | Level |","| --- | --- | --- |"); sc.forEach(r=>L.push(`| ${r.join(" | ")} |`)); L.push(""); }
+  const cell = c => String(c).replace(/\|/g,"/").replace(/\n/g," ");
+  for (const sec of briefData(m)){ if (!sec.tools.length) continue; L.push(`## ${sec.name}`, "");
+    for (const {t,items,updated} of sec.tools){ L.push(`### ${t.title}`, `_Logged ${fmtTime(updated)}_`, "");
+      for (const it of items){
+        if (it.kind==="text"){ if (it.q) L.push(`**${it.q}**`); L.push(String(it.a), ""); }
+        if (it.kind==="list"){ if (it.q) L.push(`**${it.q}**`); it.items.forEach(x=>L.push("- "+x)); L.push(""); }
+        if (it.kind==="table"){ if (it.q) L.push(`**${it.q}**`); L.push("| "+it.cols.map(cell).join(" | ")+" |", "|"+it.cols.map(()=>" --- ").join("|")+"|"); it.rows.forEach(r=>L.push("| "+r.map(cell).join(" | ")+" |")); L.push(""); }
+        if (it.kind==="bars"){ it.items.forEach(([l,n])=>L.push(`- ${l}: ${n}/${it.max}`)); L.push(""); }
+      } } }
+  return L.join("\n");
+}
+
+/* ===================== UTILITIES ===================== */
+function download(name, text, type){ const blob = new Blob([text],{type}); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href), 1000); }
+function toast(msg){ const t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toast.h); toast.h = setTimeout(()=>t.classList.remove("show"), 2200); }
+
+document.addEventListener("DOMContentLoaded", () => { rebuildCatalog(); isAdmin = false; route(); connect(); });
+</script></body></html>

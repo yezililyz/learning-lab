@@ -1,0 +1,21 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function isAdmin() {
+      return signedIn()
+        && request.auth.token.email == "yezi.lilyz@gmail.com"
+        && request.auth.token.email_verified == true;
+    }
+    // Modules and portal config: readable by signed-in users, writable only by the admin.
+    match /catalog/{id} { allow read: if signedIn(); allow write: if isAdmin(); }
+    match /config/{id}  { allow read: if signedIn(); allow write: if isAdmin(); }
+    // Progress summary: each learner writes their own; admin reads all. No answers here.
+    match /progress/{uid} {
+      allow write: if signedIn() && request.auth.uid == uid;
+      allow read: if isAdmin() || (signedIn() && request.auth.uid == uid);
+    }
+    // Profile, enrolments and answers: private to the learner. Admin cannot read them.
+    match /users/{uid}/data/{docId} { allow read, write: if signedIn() && request.auth.uid == uid; }
+  }
+}
